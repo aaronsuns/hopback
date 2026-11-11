@@ -1,0 +1,20 @@
+{
+  "name": "hopback",
+  "owner": {
+    "name": "Aaron Sun",
+    "url": "https://github.com/aaronsuns"
+  },
+  "metadata": {
+    "description": "Claude Code plugins for Hopback, the macOS menu bar app for Claude Code sessions in VS Code."
+  },
+  "plugins": [
+    {
+      "name": "hopback",
+      "source": "./plugins/hopback",
+      "description": "Tells the Hopback menu bar app when a session is working, waiting for approval or a question, or idle.",
+      "version": "0.1.0",
+      "homepage": "https://hopback.zexa.se",
+      "license": "MIT"
+    }
+  ]
+}

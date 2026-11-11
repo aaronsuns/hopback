@@ -1,0 +1,23 @@
+[package]
+name = "hopback-hook"
+description = "Claude Code hook that records session state for Hopback"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[lib]
+name = "hopback_hook"
+path = "src/lib.rs"
+
+[[bin]]
+name = "hopback-hook"
+path = "src/main.rs"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+libc.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

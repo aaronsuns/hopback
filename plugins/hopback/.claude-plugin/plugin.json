@@ -1,0 +1,11 @@
+{
+  "name": "hopback",
+  "version": "0.1.0",
+  "description": "Reports Claude Code session state (approve, question, working, idle) to the Hopback menu bar app. Does nothing when Hopback is not installed.",
+  "author": {
+    "name": "Aaron Sun"
+  },
+  "homepage": "https://hopback.zexa.se",
+  "repository": "https://github.com/aaronsuns/hopback",
+  "license": "MIT"
+}
