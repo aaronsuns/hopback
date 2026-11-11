@@ -1,6 +1,6 @@
 {
   "name": "hopback",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Reports Claude Code session state (approve, question, working, idle) to the Hopback menu bar app. Does nothing when Hopback is not installed.",
   "author": {
     "name": "Aaron Sun"

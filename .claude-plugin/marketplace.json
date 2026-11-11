@@ -12,7 +12,7 @@
       "name": "hopback",
       "source": "./plugins/hopback",
       "description": "Tells the Hopback menu bar app when a session is working, waiting for approval or a question, or idle.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "homepage": "https://hopback.zexa.se",
       "license": "MIT"
     }
