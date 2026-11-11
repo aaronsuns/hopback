@@ -184,7 +184,7 @@ impl Index {
                 }
             }
         }
-        self.entries.sort_by(|a, b| b.updated_at.cmp(&a.updated_at));
+        self.entries.sort_by_key(|e| std::cmp::Reverse(e.updated_at));
         stats.total = self.entries.len();
         let manifest = Manifest { version: INDEX_VERSION, entries: self.entries.clone() };
         hopback_hook::write_atomic(&self.root.join(INDEX_FILE), &serde_json::to_vec(&manifest)?)?;
@@ -228,8 +228,12 @@ mod tests {
         std::fs::create_dir_all(&dir).unwrap();
         let p = dir.join(format!("{id}.jsonl"));
         let lines = [
-            format!(r#"{{"type":"user","sessionId":"{id}","cwd":"/Users/alex/{folder}","message":{{"content":"{prompt}"}}}}"#),
-            format!(r#"{{"type":"assistant","sessionId":"{id}","cwd":"/Users/alex/{folder}","message":{{"content":[{{"type":"text","text":"{reply}"}}]}}}}"#),
+            format!(
+                r#"{{"type":"user","sessionId":"{id}","cwd":"/Users/alex/{folder}","message":{{"content":"{prompt}"}}}}"#
+            ),
+            format!(
+                r#"{{"type":"assistant","sessionId":"{id}","cwd":"/Users/alex/{folder}","message":{{"content":[{{"type":"text","text":"{reply}"}}]}}}}"#
+            ),
         ];
         std::fs::write(&p, lines.join("\n") + "\n").unwrap();
         p

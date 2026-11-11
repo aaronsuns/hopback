@@ -109,9 +109,31 @@ fn normalize_code(k: &str) -> Option<String> {
 
 fn is_known_code(c: &str) -> bool {
     const NAMED: &[&str] = &[
-        "Tab", "Space", "Enter", "Escape", "Backspace", "Delete", "Home", "End", "PageUp", "PageDown", "ArrowUp",
-        "ArrowDown", "ArrowLeft", "ArrowRight", "Minus", "Equal", "BracketLeft", "BracketRight", "Backslash",
-        "Semicolon", "Quote", "Comma", "Period", "Slash", "Backquote",
+        "Tab",
+        "Space",
+        "Enter",
+        "Escape",
+        "Backspace",
+        "Delete",
+        "Home",
+        "End",
+        "PageUp",
+        "PageDown",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "Minus",
+        "Equal",
+        "BracketLeft",
+        "BracketRight",
+        "Backslash",
+        "Semicolon",
+        "Quote",
+        "Comma",
+        "Period",
+        "Slash",
+        "Backquote",
     ];
     let keyed = |p: &str, ok: fn(&str) -> bool| c.strip_prefix(p).is_some_and(ok);
     NAMED.contains(&c)

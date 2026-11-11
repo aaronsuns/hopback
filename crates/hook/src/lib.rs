@@ -124,9 +124,7 @@ pub fn derive(input: &HookInput, prev: Option<State>) -> Action {
 
 /// Session ids become file names, so only allow a safe character set.
 pub fn valid_session_id(id: &str) -> bool {
-    !id.is_empty()
-        && id.len() <= 128
-        && id.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
+    !id.is_empty() && id.len() <= 128 && id.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
 }
 
 pub fn now_ms() -> u64 {
@@ -243,9 +241,8 @@ pub fn claude_pid() -> Option<i32> {
 fn proc_info(pid: i32) -> Option<(i32, String)> {
     let mut info: libc::proc_bsdinfo = unsafe { std::mem::zeroed() };
     let size = std::mem::size_of::<libc::proc_bsdinfo>() as i32;
-    let n = unsafe {
-        libc::proc_pidinfo(pid, libc::PROC_PIDTBSDINFO, 0, &mut info as *mut _ as *mut libc::c_void, size)
-    };
+    let n =
+        unsafe { libc::proc_pidinfo(pid, libc::PROC_PIDTBSDINFO, 0, &mut info as *mut _ as *mut libc::c_void, size) };
     if n != size {
         return None;
     }

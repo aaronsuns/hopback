@@ -38,7 +38,7 @@ pub fn read_all(dir: &Path) -> Vec<Marker> {
             hopback_hook::read_marker(&e.path())
         })
         .collect();
-    out.sort_by(|a, b| b.updated_at.cmp(&a.updated_at));
+    out.sort_by_key(|m| std::cmp::Reverse(m.updated_at));
     out
 }
 

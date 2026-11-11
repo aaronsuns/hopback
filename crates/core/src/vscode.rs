@@ -131,11 +131,14 @@ pub fn read_state_rows(db: &Path) -> Vec<(String, String)> {
         return Vec::new();
     };
     let _ = conn.busy_timeout(std::time::Duration::from_millis(250));
-    let sql = "SELECT key, CAST(value AS TEXT) FROM ItemTable WHERE key LIKE 'memento/webviewView.claudeVSCode%' OR key = ?1";
+    let sql =
+        "SELECT key, CAST(value AS TEXT) FROM ItemTable WHERE key LIKE 'memento/webviewView.claudeVSCode%' OR key = ?1";
     let Ok(mut stmt) = conn.prepare(sql) else { return Vec::new() };
-    stmt.query_map([EDITOR_PARTS_KEY], |r| Ok((r.get::<_, String>(0)?, r.get::<_, Option<String>>(1)?.unwrap_or_default())))
-        .map(|rows| rows.flatten().collect())
-        .unwrap_or_default()
+    stmt.query_map([EDITOR_PARTS_KEY], |r| {
+        Ok((r.get::<_, String>(0)?, r.get::<_, Option<String>>(1)?.unwrap_or_default()))
+    })
+    .map(|rows| rows.flatten().collect())
+    .unwrap_or_default()
 }
 
 #[derive(Debug, Clone)]
@@ -159,7 +162,7 @@ pub fn scan_workspace_storage(root: &Path) -> HashMap<String, Vec<WorkspaceDir>>
         map.entry(name).or_default().push(WorkspaceDir { path, storage: dir, modified });
     }
     for v in map.values_mut() {
-        v.sort_by(|a, b| b.modified.cmp(&a.modified));
+        v.sort_by_key(|d| std::cmp::Reverse(d.modified));
     }
     map
 }
@@ -177,7 +180,10 @@ mod tests {
 
     #[test]
     fn workspace_json() {
-        assert_eq!(workspace_path(r#"{"folder":"file:///Users/alex/web-app"}"#).as_deref(), Some("/Users/alex/web-app"));
+        assert_eq!(
+            workspace_path(r#"{"folder":"file:///Users/alex/web-app"}"#).as_deref(),
+            Some("/Users/alex/web-app")
+        );
         assert_eq!(
             workspace_path(r#"{"folder":"file:///Users/alex/my%20docs-site"}"#).as_deref(),
             Some("/Users/alex/my docs-site")
@@ -192,7 +198,9 @@ mod tests {
 
     #[test]
     fn sidebar_state() {
-        let v = format!(r#"{{"webviewState":"{{\"isFullEditor\":false,\"sessionID\":\"{A}\",\"sessionUpdatedAt\":1700000000000}}"}}"#);
+        let v = format!(
+            r#"{{"webviewState":"{{\"isFullEditor\":false,\"sessionID\":\"{A}\",\"sessionUpdatedAt\":1700000000000}}"}}"#
+        );
         let rows = vec![("memento/webviewView.claudeVSCodeSidebarSecondary".to_owned(), v)];
         assert_eq!(shown_session(&rows), Some(Shown { session_id: A.into(), updated_at: 1_700_000_000_000 }));
     }

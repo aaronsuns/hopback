@@ -60,15 +60,23 @@ pub fn parse_answer(out: &str, known: impl Fn(&str) -> bool) -> Result<Vec<AskHi
 }
 
 /// Find `claude`: the setting, then the login shell's PATH, then common places.
-pub fn find_claude(setting: &str, login_path: Option<&str>, home: &Path, exists: impl Fn(&Path) -> bool) -> Option<PathBuf> {
+pub fn find_claude(
+    setting: &str,
+    login_path: Option<&str>,
+    home: &Path,
+    exists: impl Fn(&Path) -> bool,
+) -> Option<PathBuf> {
     let setting = setting.trim();
     if !setting.is_empty() {
         let p = PathBuf::from(setting.replacen('~', &home.to_string_lossy(), 1));
         return exists(&p).then_some(p);
     }
     let from_path = login_path.into_iter().flat_map(|p| p.split(':')).map(|d| Path::new(d).join("claude"));
-    let fallbacks =
-        [PathBuf::from("/opt/homebrew/bin/claude"), PathBuf::from("/usr/local/bin/claude"), home.join(".local/bin/claude")];
+    let fallbacks = [
+        PathBuf::from("/opt/homebrew/bin/claude"),
+        PathBuf::from("/usr/local/bin/claude"),
+        home.join(".local/bin/claude"),
+    ];
     from_path.chain(fallbacks).find(|p| exists(p))
 }
 
@@ -110,7 +118,10 @@ mod tests {
         let exists = |p: &Path| p == Path::new("/Users/alex/.local/bin/claude") || p == Path::new("/custom/bin/claude");
         assert_eq!(find_claude("", Some("/usr/bin:/custom/bin"), home, exists), Some("/custom/bin/claude".into()));
         assert_eq!(find_claude("", None, home, exists), Some("/Users/alex/.local/bin/claude".into()));
-        assert_eq!(find_claude("~/.local/bin/claude", None, home, exists), Some("/Users/alex/.local/bin/claude".into()));
+        assert_eq!(
+            find_claude("~/.local/bin/claude", None, home, exists),
+            Some("/Users/alex/.local/bin/claude".into())
+        );
         assert_eq!(find_claude("/nope/claude", None, home, exists), None);
         assert_eq!(find_claude("", None, home, |_| false), None);
     }

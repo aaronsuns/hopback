@@ -34,7 +34,8 @@ fn score_token(token: &str, title: &str, folder: &str) -> Option<u32> {
     let t = title.to_lowercase();
     let f = folder.to_lowercase();
     let word_start = |hay: &str| {
-        hay.match_indices(token).any(|(i, _)| i == 0 || !hay[..i].chars().next_back().is_some_and(char::is_alphanumeric))
+        hay.match_indices(token)
+            .any(|(i, _)| i == 0 || !hay[..i].chars().next_back().is_some_and(char::is_alphanumeric))
     };
     if f == token {
         Some(5)
@@ -73,10 +74,13 @@ pub fn search(entries: &[Entry], query: &str) -> Vec<Hit> {
             .filter_map(|(i, e)| {
                 let text = e.text?;
                 let (start, end) = find_ci(text, &q)?;
-                Some((e.updated_at, Hit { index: i, kind: MatchKind::Content, snippet: Some(snippet(text, start, end)) }))
+                Some((
+                    e.updated_at,
+                    Hit { index: i, kind: MatchKind::Content, snippet: Some(snippet(text, start, end)) },
+                ))
             })
             .collect();
-        content.sort_by(|a, b| b.0.cmp(&a.0));
+        content.sort_by_key(|c| std::cmp::Reverse(c.0));
         hits.extend(content.into_iter().map(|(_, h)| h));
     }
     hits
@@ -102,7 +106,8 @@ pub fn find_ci(hay: &str, needle_lower: &str) -> Option<(usize, usize)> {
         return None;
     }
     // Map char positions of the lowercased text back to the original.
-    let lowered: Vec<(usize, char)> = hay.char_indices().flat_map(|(i, c)| c.to_lowercase().map(move |l| (i, l))).collect();
+    let lowered: Vec<(usize, char)> =
+        hay.char_indices().flat_map(|(i, c)| c.to_lowercase().map(move |l| (i, l))).collect();
     let needle: Vec<char> = needle_lower.chars().collect();
     let pos = lowered.windows(needle.len()).position(|w| w.iter().map(|x| x.1).eq(needle.iter().copied()))?;
     let start = lowered[pos].0;

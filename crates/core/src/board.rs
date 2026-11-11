@@ -71,7 +71,13 @@ pub fn map_windows(windows: &[Window], shown: &HashMap<String, Shown>, sessions:
 
 /// Build the board. `live` are sessions with a live marker; `known` adds history
 /// sessions (used only to resolve what a window shows).
-pub fn build(windows: &[Window], shown: &HashMap<String, Shown>, live: &[Session], known: &[Session], accessibility: bool) -> Board {
+pub fn build(
+    windows: &[Window],
+    shown: &HashMap<String, Shown>,
+    live: &[Session],
+    known: &[Session],
+    accessibility: bool,
+) -> Board {
     let mut all: Vec<Session> = live.to_vec();
     for k in known {
         if !all.iter().any(|s| s.id == k.id) {
@@ -98,7 +104,7 @@ pub fn build(windows: &[Window], shown: &HashMap<String, Shown>, live: &[Session
         .filter(|s| s.state == Some(State::Working) && !shown_ids.contains(&s.id.as_str()))
         .cloned()
         .collect();
-    background.sort_by(|a, b| b.updated_at.cmp(&a.updated_at));
+    background.sort_by_key(|s| std::cmp::Reverse(s.updated_at));
     let working = live.iter().filter(|s| s.state == Some(State::Working)).count();
     Board { windows: rows, needs_you, background, working, accessibility }
 }
@@ -195,8 +201,11 @@ mod tests {
 
     #[test]
     fn fallback_prefers_live_then_recent() {
-        let sessions =
-            vec![s("hist", "web-app", None, 50), s("live1", "web-app", Some(State::Idle), 10), s("live2", "web-app", Some(State::Idle), 20)];
+        let sessions = vec![
+            s("hist", "web-app", None, 50),
+            s("live1", "web-app", Some(State::Idle), 10),
+            s("live2", "web-app", Some(State::Idle), 20),
+        ];
         let shown = HashMap::from([("web-app".to_owned(), Shown { session_id: "unknown".into(), updated_at: 1 })]);
         assert_eq!(map_windows(&wins(), &shown, &sessions)[2].as_deref(), Some("live2"));
     }

@@ -47,7 +47,11 @@ fn full_lifecycle() {
         ("UserPromptSubmit", r#","prompt":"fix the build""#, Some("working")),
         ("PreToolUse", r#","tool_name":"Bash","tool_input":{"command":"ls"}"#, Some("working")),
         ("PermissionRequest", r#","tool_name":"Bash","tool_input":{"command":"ls"}"#, Some("approve")),
-        ("Notification", r#","message":"Claude needs your permission","notification_type":"permission_prompt""#, Some("approve")),
+        (
+            "Notification",
+            r#","message":"Claude needs your permission","notification_type":"permission_prompt""#,
+            Some("approve"),
+        ),
         ("PostToolUse", r#","tool_name":"Bash","tool_response":{}"#, Some("working")),
         ("PostToolUseFailure", r#","tool_name":"Bash","error":"exit 1""#, Some("working")),
         ("PreToolUse", r#","tool_name":"AskUserQuestion","tool_input":{}"#, Some("question")),

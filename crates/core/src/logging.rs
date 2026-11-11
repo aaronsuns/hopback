@@ -79,8 +79,10 @@ mod tests {
         for i in 0..40 {
             log.write_line(&format!("line {i:02} ......................"));
         }
-        let mut names: Vec<String> =
-            fs::read_dir(tmp.path().join("Logs")).unwrap().map(|e| e.unwrap().file_name().into_string().unwrap()).collect();
+        let mut names: Vec<String> = fs::read_dir(tmp.path().join("Logs"))
+            .unwrap()
+            .map(|e| e.unwrap().file_name().into_string().unwrap())
+            .collect();
         names.sort();
         assert_eq!(names, vec!["hopback.log", "hopback.log.1", "hopback.log.2", "hopback.log.3"]);
         let current = fs::read_to_string(log.path()).unwrap();
