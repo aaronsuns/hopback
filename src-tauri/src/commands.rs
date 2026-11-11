@@ -4,6 +4,7 @@ use crate::state::{lock, App};
 use hopback_core::board::{self, Session};
 use hopback_core::diagnostics::{self, Check};
 use hopback_core::markers::State;
+use hopback_core::plugin::{self, PluginStep};
 use hopback_core::search::{self, MatchKind};
 use hopback_core::settings::Settings;
 use hopback_core::{ask, shortcuts};
@@ -294,21 +295,120 @@ pub fn pause_shortcuts(app: Shared, handle: AppHandle, paused: bool) {
 #[derive(Serialize)]
 pub struct WelcomeStatus {
     accessibility: bool,
-    plugin: bool,
+    plugin: PluginStep,
     start_at_login: bool,
-    plugin_commands: [&'static str; 2],
+    plugin_commands: Vec<String>,
 }
 
-pub const PLUGIN_COMMANDS: [&str; 2] =
-    ["claude plugin marketplace add aaronsuns/hopback", "claude plugin install hopback@hopback"];
+fn plugin_installed(app: &App) -> bool {
+    std::fs::read_to_string(&app.paths.installed_plugins).is_ok_and(|s| diagnostics::plugin_installed(&s))
+}
 
 #[tauri::command]
 pub fn welcome_status(app: Shared, handle: AppHandle) -> WelcomeStatus {
     WelcomeStatus {
         accessibility: crate::ax::is_trusted(),
-        plugin: hopback_core::markers::hook_seen(&app.paths.markers),
+        plugin: plugin::step(plugin_installed(&app), hopback_core::markers::hook_seen(&app.paths.markers)),
         start_at_login: handle.autolaunch().is_enabled().unwrap_or(false),
-        plugin_commands: PLUGIN_COMMANDS,
+        plugin_commands: plugin::manual_commands(),
+    }
+}
+
+/// `Some(true)` allowed, `Some(false)` off, `None` macOS has not been asked yet.
+#[tauri::command]
+pub fn notification_permission() -> Option<bool> {
+    crate::banners::allowed()
+}
+
+#[derive(Serialize)]
+pub struct InstallResult {
+    ok: bool,
+    /// False when `claude` could not be found; the UI then points at the manual way.
+    claude_found: bool,
+    /// The last few lines of output when it failed.
+    output: String,
+}
+
+const INSTALL_TIMEOUT: Duration = Duration::from_secs(120);
+const INSTALL_TAIL_LINES: usize = 8;
+
+/// Run `claude plugin marketplace add …` then `claude plugin install …`.
+#[tauri::command]
+pub async fn install_plugin(app: Shared<'_>) -> Result<InstallResult, String> {
+    let app = app.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || run_install(&app)).await.map_err(|e| e.to_string())
+}
+
+fn run_install(app: &App) -> InstallResult {
+    let Some(claude) = app.claude_path() else {
+        return InstallResult { ok: false, claude_found: false, output: String::new() };
+    };
+    let mut out = String::new();
+    let mut ok = false;
+    // The marketplace step fails harmlessly when it was added before, so the
+    // install step decides the outcome.
+    for args in plugin::INSTALL_ARGS {
+        out.push_str(&format!("$ claude {}\n", args.join(" ")));
+        match run_captured(&claude, args, &app.paths.home) {
+            Ok((success, text)) => {
+                out.push_str(&text);
+                ok = success;
+            }
+            Err(e) => {
+                out.push_str(&e);
+                ok = false;
+            }
+        }
+        out.push('\n');
+    }
+    if ok {
+        log::info!("plugin installed");
+    } else {
+        log::warn!("plugin install failed: {}", plugin::tail(&out, INSTALL_TAIL_LINES));
+    }
+    InstallResult {
+        ok,
+        claude_found: true,
+        output: if ok { String::new() } else { plugin::tail(&out, INSTALL_TAIL_LINES) },
+    }
+}
+
+/// Run `claude args…`, returning success and stdout+stderr.
+fn run_captured(claude: &std::path::Path, args: &[&str], cwd: &std::path::Path) -> Result<(bool, String), String> {
+    let mut cmd = Command::new(claude);
+    cmd.args(args).current_dir(cwd).stdin(Stdio::null()).stdout(Stdio::piped()).stderr(Stdio::piped());
+    if let Some(p) = crate::state::login_shell_path() {
+        cmd.env("PATH", p);
+    }
+    let mut child = cmd.spawn().map_err(|e| format!("Could not start claude: {e}"))?;
+    let pipe = |r: Option<Box<dyn Read + Send>>| {
+        std::thread::spawn(move || {
+            let mut s = String::new();
+            if let Some(mut r) = r {
+                let _ = r.read_to_string(&mut s);
+            }
+            s
+        })
+    };
+    let out = pipe(child.stdout.take().map(|r| Box::new(r) as Box<dyn Read + Send>));
+    let err = pipe(child.stderr.take().map(|r| Box::new(r) as Box<dyn Read + Send>));
+    let deadline = Instant::now() + INSTALL_TIMEOUT;
+    let status = loop {
+        match child.try_wait() {
+            Ok(Some(s)) => break Ok(s.success()),
+            Ok(None) if Instant::now() > deadline => {
+                let _ = child.kill();
+                let _ = child.wait();
+                break Err("claude took too long (2 min).".to_string());
+            }
+            Ok(None) => std::thread::sleep(Duration::from_millis(100)),
+            Err(e) => break Err(e.to_string()),
+        }
+    };
+    let text = format!("{}{}", out.join().unwrap_or_default(), err.join().unwrap_or_default());
+    match status {
+        Ok(success) => Ok((success, text)),
+        Err(e) => Err(format!("{text}{e}")),
     }
 }
 
@@ -376,7 +476,7 @@ pub fn collect_diagnostics(app: &App, handle: &AppHandle) -> DiagnosticsView {
     let trusted = crate::ax::is_trusted();
     let pid = crate::ax::vscode_pid();
     let wins = lock(&app.board).windows.len();
-    let plugin = std::fs::read_to_string(&p.installed_plugins).is_ok_and(|s| diagnostics::plugin_installed(&s));
+    let plugin = plugin_installed(app);
     let hook = hopback_core::markers::hook_seen(&p.markers);
     let markers = hopback_core::markers::read_all(&p.markers).len();
     let transcripts = hopback_core::history::list_transcripts(&p.projects).len();
@@ -411,7 +511,7 @@ pub fn collect_diagnostics(app: &App, handle: &AppHandle) -> DiagnosticsView {
             "Hook seen",
             Some(hook),
             if hook { "yes" } else { "not yet" },
-            "Restart your Claude Code sessions after installing the plugin.",
+            "Open a new Claude Code session (or reload the VS Code window); sessions that were already open don't load new plugins.",
         ),
         Check::new(
             "Marker directory",
@@ -441,7 +541,15 @@ pub fn collect_diagnostics(app: &App, handle: &AppHandle) -> DiagnosticsView {
             if claude.is_some() { "found" } else { "not found" },
             "Set the path to claude in Settings → General.",
         ),
-        Check::new("Notifications", None, "macOS does not report this; use Send test banner in the welcome window", ""),
+        match crate::banners::allowed() {
+            Some(on) => Check::new(
+                "Notifications",
+                Some(on),
+                if on { "allowed" } else { "off" },
+                "Allow Hopback in System Settings → Notifications.",
+            ),
+            None => Check::new("Notifications", None, "not asked yet; use Send test banner in the welcome window", ""),
+        },
         Check::new("Update check", None, update, ""),
     ];
     let report = diagnostics::report(&version, &os_version(), &checks);

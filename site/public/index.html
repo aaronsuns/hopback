@@ -299,14 +299,18 @@ footer a { color: var(--muted); }
       </li>
       <li>
         <h3>Turn on Accessibility</h3>
-        <p>Open Hopback; the welcome window walks you through it. Accessibility lets Hopback list VS Code's windows and raise one: System Settings → Privacy &amp; Security → Accessibility → Hopback.</p>
+        <p>Open Hopback; the welcome window ticks each step off as you go. Click Open System Settings, find Hopback in the list and switch it on. If it is already on but the step stays unticked, remove Hopback with − and add it again with +.</p>
       </li>
       <li>
         <h3>Add the Claude Code plugin</h3>
-        <p>The plugin tells Hopback when a session is working or waiting. In a terminal, run:</p>
+        <p>The plugin tells Hopback when a session is working or waiting. Click <strong>Install plugin</strong> in the welcome window, or run these in Terminal (the Claude Code panel in VS Code has no <code>/plugin</code> command):</p>
         <pre><code>claude plugin marketplace add aaronsuns/hopback
 claude plugin install hopback@hopback</code></pre>
-        <p style="margin-top:8px">Then start a new session. It writes one small status file per session to <code>~/.claude/hopback/</code> and nothing else.</p>
+        <p style="margin-top:8px">Then open a new Claude Code session (or reload the VS Code window); sessions that were already open don't load new plugins. It writes one small status file per session to <code>~/.claude/hopback/</code> and nothing else.</p>
+      </li>
+      <li>
+        <h3>Allow notifications</h3>
+        <p>Click Send test banner. If no banner appears, click Notification settings and allow Hopback.</p>
       </li>
     </ol>
   </div>

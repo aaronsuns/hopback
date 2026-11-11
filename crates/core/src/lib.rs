@@ -7,6 +7,7 @@ pub mod diagnostics;
 pub mod history;
 pub mod logging;
 pub mod markers;
+pub mod plugin;
 pub mod search;
 pub mod settings;
 pub mod shortcuts;

@@ -46,11 +46,19 @@ export interface SettingsView {
   version: string;
 }
 
+export type PluginStep = "not_installed" | "installed" | "ready";
+
 export interface WelcomeStatus {
   accessibility: boolean;
-  plugin: boolean;
+  plugin: PluginStep;
   start_at_login: boolean;
-  plugin_commands: [string, string];
+  plugin_commands: string[];
+}
+
+export interface InstallResult {
+  ok: boolean;
+  claude_found: boolean;
+  output: string;
 }
 
 export interface Check {
@@ -73,6 +81,8 @@ export const api = {
   resetShortcuts: () => invoke<SettingsView>("reset_shortcuts"),
   pauseShortcuts: (paused: boolean) => invoke<void>("pause_shortcuts", { paused }),
   welcomeStatus: () => invoke<WelcomeStatus>("welcome_status"),
+  notificationPermission: () => invoke<boolean | null>("notification_permission"),
+  installPlugin: () => invoke<InstallResult>("install_plugin"),
   openAccessibility: () => invoke<void>("open_accessibility"),
   testBanner: () => invoke<void>("test_banner"),
   openNotificationSettings: () => invoke<void>("open_notification_settings"),

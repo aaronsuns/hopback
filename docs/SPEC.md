@@ -136,15 +136,29 @@ question banners separately.
 
 ## First run (welcome window)
 
-A checklist that ticks itself off live: **Accessibility** (button opens the right System Settings pane),
-**Claude Code plugin** (shows the two plugin install commands with copy buttons; ticks when `.hook-seen` appears),
-**Notifications**, **Start at login**. **Finish** closes it; the history index may still be building.
+A checklist that ticks itself off live. Each step says in plain words what to do and what "done" looks like;
+a user who has never heard of Claude Code plugins or macOS privacy settings must be able to finish it alone.
 
-Plugin install commands to show (terminal commands: the VS Code Claude Code panel has no `/plugin`):
-```
-claude plugin marketplace add aaronsuns/hopback
-claude plugin install hopback@hopback
-```
+1. **Accessibility.** Text: "Click Open System Settings, find Hopback in the list and switch it on. If
+   Hopback is already switched on but this step stays unticked, select Hopback, remove it with −, then add it
+   again with + (/Applications/Hopback.app). That happens after reinstalling an older copy." Button opens the
+   right pane (and asks macOS to add Hopback to the list).
+2. **Claude Code plugin.** Primary action: an **Install plugin** button that runs, with the `claude` found as
+   for Ask, `claude plugin marketplace add aaronsuns/hopback` and then `claude plugin install
+   hopback@hopback`, shows a spinner, then "Installed" or the error output (last few lines). If `claude` is not
+   found, say so and show the manual way. Manual way, always shown below in smaller text: the two terminal
+   commands with copy buttons, plus "The Claude Code panel in VS Code has no /plugin command; run these in
+   Terminal." After installing, the step shows "Installed. Now open a new Claude Code session (or reload the
+   VS Code window) — sessions that were already open don't load new plugins." It ticks when `.hook-seen`
+   appears. Installed-but-no-hook-yet (plugin listed in `installed_plugins.json`, no `.hook-seen`) shows that
+   same "open a new session" hint instead of the install button.
+3. **Notifications.** Text: "Click Send test banner. If no banner appears, click Notification settings and
+   allow Hopback." Ticks when notifications are allowed; re-check the permission whenever the window gains
+   focus (a restart must not show a granted permission as missing).
+4. **Start at login.**
+
+**Finish** closes it; the history index may still be building. The same wording is used in the README's
+install section and on the product page.
 
 ## Diagnostics window
 

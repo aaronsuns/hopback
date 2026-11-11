@@ -53,28 +53,31 @@ When a session starts waiting for you, Hopback shows a banner. Click it to go to
    xattr -dr com.apple.quarantine /Applications/Hopback.app
    ```
 
-3. Open Hopback. A welcome window walks you through the rest:
-   - **Accessibility** — lets Hopback list VS Code's windows and raise one. Turn Hopback on in
-     System Settings → Privacy & Security → Accessibility.
-   - **Claude Code plugin** — see below.
-   - **Notifications** — allow banners.
+3. Open Hopback. A welcome window walks you through the rest and ticks each step off by itself:
+   - **Accessibility** — lets Hopback list VS Code's windows and raise one. Click **Open System
+     Settings**, find Hopback in the list and switch it on. If it is already on but the step stays
+     unticked, select Hopback, remove it with **−**, then add it again with **+**
+     (`/Applications/Hopback.app`). That happens after reinstalling an older copy.
+   - **Claude Code plugin** — click **Install plugin** (see below).
+   - **Notifications** — click **Send test banner**. If no banner appears, click **Notification
+     settings** and allow Hopback.
    - **Start at login** — on by default.
 
 ### The Claude Code plugin
 
-The plugin is what tells Hopback a session is working or waiting. In a terminal, run:
+The plugin is what tells Hopback a session is working or waiting. **Install plugin** in the welcome
+window does it for you. To do it by hand, run these in Terminal (the Claude Code panel in VS Code has
+no `/plugin` command):
 
 ```
 claude plugin marketplace add aaronsuns/hopback
 claude plugin install hopback@hopback
 ```
 
-(The Claude Code panel in VS Code doesn't offer `/plugin`; in the terminal version of Claude Code
-you can also type `/plugin marketplace add aaronsuns/hopback` and `/plugin install hopback@hopback`.)
-
-Then start a new session (or restart running ones). The plugin runs a tiny program inside
-Hopback.app on Claude Code's hook events. It writes one small status file per session to
-`~/.claude/hopback/` and nothing else. If Hopback is not installed, the plugin does nothing.
+Then open a new Claude Code session (or reload the VS Code window) — sessions that were already open
+don't load new plugins. The plugin runs a tiny program inside Hopback.app on Claude Code's hook
+events. It writes one small status file per session to `~/.claude/hopback/` and nothing else. If
+Hopback is not installed, the plugin does nothing.
 
 Without the plugin, Hopback still shows your windows and lets you search, but it cannot tell when
 a session needs you.

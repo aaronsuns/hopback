@@ -160,6 +160,8 @@ pub fn run() {
             commands::reset_shortcuts,
             commands::pause_shortcuts,
             commands::welcome_status,
+            commands::notification_permission,
+            commands::install_plugin,
             commands::open_accessibility,
             commands::test_banner,
             commands::open_notification_settings,
