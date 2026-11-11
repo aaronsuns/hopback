@@ -1,0 +1,120 @@
+name: Release
+
+# Push a tag vX.Y.Z (matching the version in tauri.conf.json) to build, sign and publish a release.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: macos-latest
+    env:
+      TAG: ${{ github.ref_name }}
+      REPO: ${{ github.repository }}
+      GH_TOKEN: ${{ github.token }}
+      BUNDLE: target/universal-apple-darwin/release/bundle
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the tag matches the app version
+        run: |
+          v=$(node -p "require('./src-tauri/tauri.conf.json').version")
+          [ "v$v" = "$TAG" ] || { echo "::error::tag $TAG but tauri.conf.json says $v"; exit 1; }
+          echo "VERSION=$v" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: release-universal
+      - run: npm ci
+
+      # The certificate is self-signed, so it is imported into a temporary keychain and marked
+      # trusted for code signing. The same identity every release keeps users' Accessibility grant.
+      - name: Import the signing certificate
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+        run: |
+          kc="$RUNNER_TEMP/hopback-signing.keychain-db"
+          kcpw=$(openssl rand -hex 24)
+          echo "$APPLE_CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security create-keychain -p "$kcpw" "$kc"
+          security set-keychain-settings -lut 21600 "$kc"
+          security unlock-keychain -p "$kcpw" "$kc"
+          security import "$RUNNER_TEMP/cert.p12" -k "$kc" -P "$APPLE_CERTIFICATE_PASSWORD" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          rm "$RUNNER_TEMP/cert.p12"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$kcpw" "$kc" >/dev/null
+          security list-keychains -d user -s "$kc" $(security list-keychains -d user | tr -d '"')
+          security find-certificate -c "$APPLE_SIGNING_IDENTITY" -p "$kc" > "$RUNNER_TEMP/cert.pem"
+          sudo security add-trusted-cert -d -r trustRoot -p codeSign \
+            -k /Library/Keychains/System.keychain "$RUNNER_TEMP/cert.pem"
+          security find-identity -v -p codesigning "$kc"
+
+      - name: Build (universal, signed, with updater artifacts)
+        env:
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: npx tauri build --target universal-apple-darwin
+
+      - name: Verify signatures
+        env:
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+        run: |
+          app="$BUNDLE/macos/Hopback.app"
+          for b in "$app/Contents/MacOS/hopback" "$app/Contents/MacOS/hopback-hook"; do
+            echo "== $b"
+            lipo -archs "$b"
+            codesign -dv "$b" 2>&1 | tee "$RUNNER_TEMP/cs.txt"
+            grep -qx "Authority=$APPLE_SIGNING_IDENTITY" "$RUNNER_TEMP/cs.txt" \
+              || { echo "::error::$b is not signed by $APPLE_SIGNING_IDENTITY"; exit 1; }
+          done
+          codesign --verify --deep --strict --verbose=2 "$app"
+
+      - name: Collect assets and write latest.json
+        run: |
+          mkdir -p out
+          cp "$BUNDLE"/dmg/*.dmg out/Hopback.dmg
+          cp "$BUNDLE/macos/Hopback.app.tar.gz" out/Hopback.app.tar.gz
+          cp "$BUNDLE/macos/Hopback.app.tar.gz.sig" out/Hopback.app.tar.gz.sig
+          git fetch --force origin "refs/tags/$TAG:refs/tags/$TAG" 2>/dev/null || true
+          notes=$(git tag -l --format='%(contents)' "$TAG" | sed '/-----BEGIN PGP/,$d')
+          [ -n "$(echo "$notes" | tr -d '[:space:]')" ] || notes="Hopback $VERSION"
+          printf '%s\n' "$notes" > out/notes.md
+          SIG=$(cat out/Hopback.app.tar.gz.sig) \
+          URL="https://github.com/$REPO/releases/download/$TAG/Hopback.app.tar.gz" \
+          NOTES="$notes" node -e '
+            const p = { signature: process.env.SIG, url: process.env.URL };
+            const j = { version: process.env.VERSION, notes: process.env.NOTES,
+              pub_date: new Date().toISOString().replace(/\.\d+Z$/, "Z"),
+              platforms: { "darwin-universal": p, "darwin-aarch64": p, "darwin-x86_64": p } };
+            require("fs").writeFileSync("out/latest.json", JSON.stringify(j, null, 2) + "\n");'
+          cat out/latest.json
+          ls -l out
+
+      - name: Publish the release
+        run: |
+          gh release create "$TAG" -R "$REPO" --title "Hopback $VERSION" --notes-file out/notes.md \
+            --verify-tag --latest \
+            out/Hopback.dmg out/Hopback.app.tar.gz out/Hopback.app.tar.gz.sig out/latest.json
+          gh release view "$TAG" -R "$REPO" --json isDraft,isPrerelease,assets \
+            --jq '"draft=\(.isDraft) prerelease=\(.isPrerelease)", (.assets[] | "asset: \(.name) \(.size)")'
+
+      - name: Remove the temporary keychain
+        if: always()
+        run: security delete-keychain "$RUNNER_TEMP/hopback-signing.keychain-db" 2>/dev/null || true

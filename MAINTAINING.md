@@ -51,33 +51,77 @@ for the terminal it runs in. Handy when the mapping looks wrong.
 
 ## Releasing
 
-1. Bump the version in `package.json`, `Cargo.toml` (`[workspace.package]`), `tauri.conf.json`,
+Releases are built by GitHub Actions (`.github/workflows/release.yml`) when a `v*` tag is pushed:
+a universal (arm64 + x86_64) build, with the app and `hopback-hook` signed by the same
+self-signed identity, the DMG, the signed updater archive and `latest.json`, all attached to a
+published GitHub release.
+
+1. Bump the version everywhere: `package.json`, `Cargo.toml` (`[workspace.package]`, then
+   `cargo check` to refresh `Cargo.lock`), `src-tauri/tauri.conf.json`,
    `.claude-plugin/marketplace.json` and `plugins/hopback/.claude-plugin/plugin.json`.
-2. Build universal (above) on a Mac with the signing identity.
-3. Sign, create a GitHub release with the `.dmg`, the updater archive and `latest.json`.
+2. Commit and push to `main`; wait for CI to go green.
+3. Tag with the release notes as the tag message, and push the tag:
+
+   ```sh
+   git tag -a v0.2.0 -m "Hopback 0.2.0" -m "- What changed, one line each"
+   git push origin v0.2.0
+   ```
+
+   The workflow refuses a tag that does not match `tauri.conf.json`'s version. The tag message
+   becomes the release notes and the `notes` in `latest.json`.
+4. Watch the run (`gh run watch`). The *Verify signatures* step prints `codesign -dv` for both
+   binaries and fails unless both show `Authority=Hopback Self-Signed`.
+5. If it fails: fix, then delete the release (if one was created) and the tag, and tag again:
+
+   ```sh
+   gh release delete v0.2.0 --yes; git push --delete origin v0.2.0; git tag -d v0.2.0
+   ```
+
+Assets on each release: `Hopback.dmg` (so
+`https://github.com/aaronsuns/hopback/releases/latest/download/Hopback.dmg` always works),
+`Hopback.app.tar.gz` + `.sig` (the updater archive) and `latest.json`.
+
+### Secrets
+
+The workflow uses these GitHub repository secrets. The owner keeps an encrypted backup of each.
+
+| Secret | What |
+|---|---|
+| `APPLE_CERTIFICATE` | the code-signing certificate and key, base64 `.p12` |
+| `APPLE_CERTIFICATE_PASSWORD` | its password |
+| `APPLE_SIGNING_IDENTITY` | the certificate's name, `Hopback Self-Signed` |
+| `TAURI_SIGNING_PRIVATE_KEY` | the updater (minisign) private key |
+| `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | its password |
 
 ### Code signing
 
 Every release must be signed with the **same** identity, or macOS forgets the Accessibility
-grant on update. Until there is an Apple Developer ID, a self-signed certificate is fine:
-
-1. Keychain Access → Certificate Assistant → Create a Certificate…, name `Hopback Signing`,
-   type *Code Signing*.
-2. Set `bundle.macOS.signingIdentity` in `tauri.conf.json` to `"Hopback Signing"` (it is `null`
-   now, which means ad-hoc signing; ad-hoc signatures change every build).
+grant on update. There is no Apple Developer ID yet, so the identity is a self-signed certificate
+and the app is not notarized (hence the `xattr` step in the README). The workflow imports it into
+a temporary keychain and marks it trusted for code signing on the runner. Local builds keep
+`bundle.macOS.signingIdentity: null` (ad-hoc signing); set `APPLE_SIGNING_IDENTITY` to sign
+locally with the certificate in your login keychain.
 
 ### Updater
 
-The updater plugin is wired but **disabled until configured**: `src-tauri/src/updater.rs` only
-registers it when `plugins.updater.pubkey` in `tauri.conf.json` is non-empty.
+`plugins.updater.pubkey` in `tauri.conf.json` holds the updater public key; the app checks
+`https://github.com/aaronsuns/hopback/releases/latest/download/latest.json` (this needs the repo
+to be public). `bundle.createUpdaterArtifacts` is `true`, so `tauri build` writes the
+`.app.tar.gz` and signs it with `TAURI_SIGNING_PRIVATE_KEY`. Losing that key means existing
+installs can no longer update automatically.
 
-1. `npx tauri signer generate -w ~/.tauri/hopback.key` — keep the private key out of the repo
-   (a GitHub Actions secret, `TAURI_SIGNING_PRIVATE_KEY`, plus its password).
-2. Put the public key in `plugins.updater.pubkey`.
-3. Set `bundle.createUpdaterArtifacts` to `true`.
-4. The endpoint is `https://github.com/aaronsuns/hopback/releases/latest/download/latest.json`;
-   upload the generated `latest.json` (version, notes, pub_date, `platforms.darwin-universal` /
-   `darwin-aarch64` / `darwin-x86_64` with `url` and `signature`) to each release.
+### Plugin version
+
+The Claude Code plugin (`plugins/hopback`) ships from this repo, not inside the app. Its version
+in `plugin.json` and `marketplace.json` follows the app version so the two are easy to match; the
+plugin only runs `/Applications/Hopback.app/Contents/MacOS/hopback-hook`, so an app update changes
+the hook without users reinstalling the plugin. Users get plugin changes with
+`/plugin marketplace update hopback`.
+
+### Website
+
+`site/` is the landing page at <https://hopback.zexa.se>, a Cloudflare Worker with static assets
+(free plan). Deploy with `cd site && npx wrangler@4 deploy`.
 
 ## The hook
 
@@ -184,8 +228,6 @@ are not indexed.
 ## TODO
 
 - Real screenshot for the README (`docs/screenshot.png`).
-- Release workflow (build universal, sign, upload `.dmg` + `latest.json`) once the signing key
-  and certificate exist.
 - Banners use the deprecated `NSUserNotification`; move to `UNUserNotificationCenter` (needs a
   signed bundle) and then report the real permission state in Diagnostics.
 - Support Cursor / VS Code Insiders (different bundle ids, storage paths and URI schemes).

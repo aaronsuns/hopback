@@ -24,7 +24,7 @@
     "copyright": "Copyright (c) 2026 Aaron Sun. MIT licence.",
     "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.png"],
     "externalBin": ["binaries/hopback-hook"],
-    "createUpdaterArtifacts": false,
+    "createUpdaterArtifacts": true,
     "macOS": {
       "minimumSystemVersion": "13.0",
       "signingIdentity": null
@@ -32,7 +32,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDk4NkMyMTQ5OEIxMkNFREUKUldUZXpoS0xTU0ZzbU1IZ2psRW1nMnV4TU9aUTA5c3kybFYzRjE4RjFYUTNFMnplTnJ2ZEc4T2UK",
       "endpoints": ["https://github.com/aaronsuns/hopback/releases/latest/download/latest.json"]
     }
   }

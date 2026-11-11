@@ -1,8 +1,17 @@
 name: CI
 
+# macOS minutes are expensive: run on main and PRs only (not on tags; the release workflow
+# builds those), skip changes that cannot affect the build, and cancel superseded runs.
 on:
   push:
+    branches: [main]
+    paths-ignore: ["site/**", "**/*.md", "LICENSE"]
   pull_request:
+    paths-ignore: ["site/**", "**/*.md", "LICENSE"]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check:
