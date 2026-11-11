@@ -80,9 +80,11 @@ jobs:
           for b in "$app/Contents/MacOS/hopback" "$app/Contents/MacOS/hopback-hook"; do
             echo "== $b"
             lipo -archs "$b"
-            codesign -dv "$b" 2>&1 | tee "$RUNNER_TEMP/cs.txt"
+            codesign -dvv "$b" 2>&1 | tee "$RUNNER_TEMP/cs.txt"
+            # The identity is a secret, so GitHub masks it in the log; print it with · for spaces.
+            grep '^Authority=' "$RUNNER_TEMP/cs.txt" | sed 's/ /·/g'
             grep -qx "Authority=$APPLE_SIGNING_IDENTITY" "$RUNNER_TEMP/cs.txt" \
-              || { echo "::error::$b is not signed by $APPLE_SIGNING_IDENTITY"; exit 1; }
+              || { echo "::error::$b is not signed by the signing identity"; exit 1; }
           done
           codesign --verify --deep --strict --verbose=2 "$app"
 
