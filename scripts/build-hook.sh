@@ -9,6 +9,8 @@ mkdir -p "$out"
 if [ "$target" = "universal-apple-darwin" ]; then
   for t in aarch64-apple-darwin x86_64-apple-darwin; do
     cargo build --release -p hopback-hook --target "$t"
+    # Each arch slice of the app is compiled on its own and checks for its own sidecar.
+    cp "target/$t/release/hopback-hook" "$out/hopback-hook-$t"
   done
   lipo -create -output "$out/hopback-hook-universal-apple-darwin" \
     target/aarch64-apple-darwin/release/hopback-hook target/x86_64-apple-darwin/release/hopback-hook
