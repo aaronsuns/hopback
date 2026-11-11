@@ -4,6 +4,8 @@ Hopback is a macOS menu bar app for people who run several Claude Code sessions 
 once. It shows which session each VS Code window is on, tells you when a session is waiting for
 you, and gets you back to any session, open or past, with a hotkey or a search.
 
+**Website:** <https://hopback.zexa.se> · **Download:** [latest release](https://github.com/aaronsuns/hopback/releases/latest)
+
 > Hopback is an independent open-source project. It is not affiliated with, endorsed by or
 > supported by Anthropic. "Claude" and "Claude Code" are Anthropic's names for their products.
 
