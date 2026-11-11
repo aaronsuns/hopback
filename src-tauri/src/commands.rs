@@ -299,7 +299,8 @@ pub struct WelcomeStatus {
     plugin_commands: [&'static str; 2],
 }
 
-pub const PLUGIN_COMMANDS: [&str; 2] = ["/plugin marketplace add aaronsuns/hopback", "/plugin install hopback@hopback"];
+pub const PLUGIN_COMMANDS: [&str; 2] =
+    ["claude plugin marketplace add aaronsuns/hopback", "claude plugin install hopback@hopback"];
 
 #[tauri::command]
 pub fn welcome_status(app: Shared, handle: AppHandle) -> WelcomeStatus {
@@ -404,7 +405,7 @@ pub fn collect_diagnostics(app: &App, handle: &AppHandle) -> DiagnosticsView {
             "Claude Code plugin",
             Some(plugin),
             if plugin { "installed" } else { "not installed" },
-            "In Claude Code: /plugin marketplace add aaronsuns/hopback, then /plugin install hopback@hopback.",
+            "In a terminal: claude plugin marketplace add aaronsuns/hopback, then claude plugin install hopback@hopback.",
         ),
         Check::new(
             "Hook seen",

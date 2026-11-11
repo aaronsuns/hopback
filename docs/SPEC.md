@@ -137,13 +137,13 @@ question banners separately.
 ## First run (welcome window)
 
 A checklist that ticks itself off live: **Accessibility** (button opens the right System Settings pane),
-**Claude Code plugin** (shows the two `/plugin` commands with copy buttons; ticks when `.hook-seen` appears),
+**Claude Code plugin** (shows the two plugin install commands with copy buttons; ticks when `.hook-seen` appears),
 **Notifications**, **Start at login**. **Finish** closes it; the history index may still be building.
 
-Plugin install commands to show:
+Plugin install commands to show (terminal commands: the VS Code Claude Code panel has no `/plugin`):
 ```
-/plugin marketplace add aaronsuns/hopback
-/plugin install hopback@hopback
+claude plugin marketplace add aaronsuns/hopback
+claude plugin install hopback@hopback
 ```
 
 ## Diagnostics window

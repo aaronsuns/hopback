@@ -62,13 +62,15 @@ When a session starts waiting for you, Hopback shows a banner. Click it to go to
 
 ### The Claude Code plugin
 
-The plugin is what tells Hopback a session is working or waiting. In Claude Code (in VS Code or a
-terminal), run:
+The plugin is what tells Hopback a session is working or waiting. In a terminal, run:
 
 ```
-/plugin marketplace add aaronsuns/hopback
-/plugin install hopback@hopback
+claude plugin marketplace add aaronsuns/hopback
+claude plugin install hopback@hopback
 ```
+
+(The Claude Code panel in VS Code doesn't offer `/plugin`; in the terminal version of Claude Code
+you can also type `/plugin marketplace add aaronsuns/hopback` and `/plugin install hopback@hopback`.)
 
 Then start a new session (or restart running ones). The plugin runs a tiny program inside
 Hopback.app on Claude Code's hook events. It writes one small status file per session to
