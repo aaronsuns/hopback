@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code notifications on macOS: know when it waits</title>
+<meta name="description" content="Get a macOS banner when Claude Code needs approval or an answer, and a menu bar count of waiting sessions. Hooks, DIY options and Hopback compared.">
+<link rel="canonical" href="https://hopback.zexa.se/claude-code-notifications-macos">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Claude Code notifications on macOS: know when it waits">
+<meta property="og:description" content="Get a macOS banner when Claude Code needs approval or an answer, and a menu bar count of waiting sessions. Hooks, DIY options and Hopback compared.">
+<meta property="og:url" content="https://hopback.zexa.se/claude-code-notifications-macos">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://hopback.zexa.se/img/og.png">
+<meta property="og:site_name" content="Hopback">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/guide.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
+  {
+   "@type": "ListItem",
+   "position": 1,
+   "name": "Hopback",
+   "item": "https://hopback.zexa.se/"
+  },
+  {
+   "@type": "ListItem",
+   "position": 2,
+   "name": "Claude Code notifications on macOS",
+   "item": "https://hopback.zexa.se/claude-code-notifications-macos"
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Does Claude Code have built-in notifications?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Claude Code has a Notification hook that you can wire to a command of your own. Check the Claude Code documentation for what it offers on your version. Hopback builds on the hook events to add a menu bar overview."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Do I need the plugin for banners?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. The plugin is what tells Hopback a session is working or waiting. Without it, Hopback still lists windows and searches history, but cannot tell when a session needs you."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "What does the plugin write to disk?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "One small status file per session in ~/.claude/hopback/, and nothing else."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Does it work with the VS Code extension and the terminal?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Banners and the Needs you list cover both, but only VS Code windows are listed and raised."
+   }
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Article",
+ "headline": "Claude Code notifications on macOS",
+ "url": "https://hopback.zexa.se/claude-code-notifications-macos",
+ "inLanguage": "en",
+ "author": {
+  "@type": "Person",
+  "name": "Aaron Sun"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Zexa",
+  "url": "https://zexa.se"
+ },
+ "datePublished": "2026-11-16",
+ "dateModified": "2026-11-16"
+}
+</script>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="/"><img src="/icon-192.png" alt="" width="28" height="28">Hopback</a>
+  <nav><a href="/#guides">Guides</a><a href="https://github.com/aaronsuns/hopback">GitHub</a></nav>
+</div></div>
+<main>
+<p class="crumbs"><a href="/">Hopback</a> / Claude Code notifications on macOS</p>
+<h1>Claude Code notifications on macOS</h1>
+<p class="lead">A Claude Code session that stops to ask permission just sits there until you notice. This page covers how to get notified on a Mac, from a do-it-yourself hook to a menu bar app that tracks every session.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+
+<h2>Why you miss "Claude is waiting"</h2>
+<p>Claude Code runs long tasks, but it pauses when it needs you: to approve a tool call, to answer a question, or to review a plan. If you are in another window or another app, nothing tells you. With several sessions, the one that has been waiting for twenty minutes is usually the one you forgot about.</p>
+
+<h2>Option 1: write your own hook</h2>
+<p>Claude Code has hooks, commands it runs on events. One of those events is <code>Notification</code>, which fires when Claude Code sends a notification, for example when it needs permission. You can point it at a shell command that shows a macOS notification. A minimal example in your Claude Code settings:</p>
+<pre><code>"hooks": { "Notification": [ { "hooks": [ { "type": "command",
+  "command": "osascript -e 'display notification \"Claude Code needs you\" with title \"Claude Code\"'" } ] } ] }</code></pre>
+<p>This is the lightest option and needs no extra software. Check the Claude Code documentation for the exact settings format, since it can change. What a DIY banner does not give you is a running overview: you do not know <em>which</em> session called, or how many are waiting now.</p>
+
+<h2>Option 2: Hopback, a menu bar view of every session</h2>
+<p>Hopback installs a small Claude Code plugin that listens to Claude Code's hook events (including <code>Notification</code>, <code>PermissionRequest</code> and <code>Stop</code>) and records one status file per session. The Hopback app reads those files and gives you:</p>
+<ul>
+<li>A <strong>banner</strong> when a session starts waiting for you. Click it to go straight to that session.</li>
+<li>A <strong>menu bar summary</strong> such as <code>⚠1 ⚙2 · ▢8</code>: one needs you, two are working, eight VS Code windows show a session.</li>
+<li>A <strong>Needs you</strong> list with every waiting session, whether or not a window shows it. <kbd>⌃⌥0</kbd> jumps to the next one, and again to the one after.</li>
+<li>Glyphs per session: ⚠️ approve a tool call, ❓ answer a question or review a plan, ⚙️ working, 💤 finished.</li>
+</ul>
+<p>The plugin writes only a small status file per session to <code>~/.claude/hopback/</code>. If Hopback is not installed, the plugin does nothing.</p>
+
+<h2>Set it up</h2>
+<ol>
+<li>Download Hopback from the <a href="https://github.com/aaronsuns/hopback/releases/latest">latest release</a>, drag it to Applications and clear the quarantine flag once: <code>xattr -dr com.apple.quarantine /Applications/Hopback.app</code></li>
+<li>Open it and follow the welcome window: Accessibility, the plugin, notifications and start at login.</li>
+<li>Or install the plugin by hand: <code>claude plugin marketplace add aaronsuns/hopback</code> then <code>claude plugin install hopback@hopback</code>.</li>
+<li>Open a new Claude Code session; sessions that were already open do not load new plugins.</li>
+</ol>
+<p>If no banner appears, use <strong>Send test banner</strong> in the welcome window, then check System Settings, then Notifications, then Hopback. The menu's <strong>Diagnostics</strong> shows whether the plugin is installed and has run. More on the mechanism in <a href="/claude-code-hooks-session-status">Claude Code hooks for session status</a>.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>Does Claude Code have built-in notifications?</h3>
+<p>Claude Code has a Notification hook that you can wire to a command of your own. Check the Claude Code documentation for what it offers on your version. Hopback builds on the hook events to add a menu bar overview.</p>
+<h3>Do I need the plugin for banners?</h3>
+<p>Yes. The plugin is what tells Hopback a session is working or waiting. Without it, Hopback still lists windows and searches history, but cannot tell when a session needs you.</p>
+<h3>What does the plugin write to disk?</h3>
+<p>One small status file per session in ~/.claude/hopback/, and nothing else.</p>
+<h3>Does it work with the VS Code extension and the terminal?</h3>
+<p>Banners and the Needs you list cover both, but only VS Code windows are listed and raised.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+</main>
+<footer>
+<p><strong>More from Hopback</strong></p>
+<ul><li><a href="/">Hopback home page</a></li><li><a href="/claude-code-session-switcher-vs-code">Claude Code session switcher for VS Code</a></li><li><a href="/claude-code-multiple-windows-vs-code">Claude Code in multiple VS Code windows</a></li><li><a href="/search-claude-code-history">Search Claude Code history</a></li><li><a href="/claude-code-hooks-session-status">Claude Code hooks for session status</a></li></ul>
+<p>Made by Aaron Sun · <a href="https://zexa.se">Zexa</a> · <a href="https://github.com/aaronsuns/hopback">GitHub</a><br>Hopback is an independent project, not affiliated with, endorsed by or supported by Anthropic. "Claude" and "Claude Code" are Anthropic's names for their products.</p>
+</footer>
+</body>
+</html>

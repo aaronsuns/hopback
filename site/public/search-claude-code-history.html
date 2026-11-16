@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search Claude Code history and find an old session</title>
+<meta name="description" content="Find any past Claude Code conversation on your Mac by title, folder or text, resume it from VS Code, or describe it in words and let Claude find it with Hopback.">
+<link rel="canonical" href="https://hopback.zexa.se/search-claude-code-history">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Search Claude Code history and find an old session">
+<meta property="og:description" content="Find any past Claude Code conversation on your Mac by title, folder or text, resume it from VS Code, or describe it in words and let Claude find it with Hopback.">
+<meta property="og:url" content="https://hopback.zexa.se/search-claude-code-history">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://hopback.zexa.se/img/og.png">
+<meta property="og:site_name" content="Hopback">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/guide.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
+  {
+   "@type": "ListItem",
+   "position": 1,
+   "name": "Hopback",
+   "item": "https://hopback.zexa.se/"
+  },
+  {
+   "@type": "ListItem",
+   "position": 2,
+   "name": "Search Claude Code history",
+   "item": "https://hopback.zexa.se/search-claude-code-history"
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Does Hopback search the text of conversations?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. With three or more characters it also searches conversation text, after title matches, and shows a snippet around the hit."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "What does Ask Claude do?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "It runs your own claude command over Hopback's history index with read-only tools and returns the sessions it thinks match your description, each with a reason. It counts towards your Claude usage."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Is my conversation text uploaded?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Hopback does not upload it. The index is stored in your Mac's cache folder. Only the optional Ask feature involves Claude, through your own login."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Can I open a past session in VS Code from the search?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. Pressing Return opens the folder in VS Code and then the conversation, or raises the window that already shows it."
+   }
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Article",
+ "headline": "How to search Claude Code history and find an old session",
+ "url": "https://hopback.zexa.se/search-claude-code-history",
+ "inLanguage": "en",
+ "author": {
+  "@type": "Person",
+  "name": "Aaron Sun"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Zexa",
+  "url": "https://zexa.se"
+ },
+ "datePublished": "2026-11-16",
+ "dateModified": "2026-11-16"
+}
+</script>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="/"><img src="/icon-192.png" alt="" width="28" height="28">Hopback</a>
+  <nav><a href="/#guides">Guides</a><a href="https://github.com/aaronsuns/hopback">GitHub</a></nav>
+</div></div>
+<main>
+<p class="crumbs"><a href="/">Hopback</a> / Search Claude Code history</p>
+<h1>How to search Claude Code history and find an old session</h1>
+<p class="lead">You fixed that bug two weeks ago in a Claude Code conversation. Which one was it? This page shows how to find and reopen old sessions, and how Hopback makes it a keystroke.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+
+<h2>Why finding old Claude Code sessions is hard</h2>
+<p>Claude Code keeps your conversations, but the title of a session is often just the first thing you typed, and across many projects there are hundreds of them. Claude Code itself can resume earlier conversations (for instance with <code>claude --resume</code> or <code>/resume</code> in a session), which is useful when you remember roughly when and where. It is less useful when you remember only what was said.</p>
+
+<h2>Search by title, folder and text with Hopback</h2>
+<p>Press <kbd>⌃⇧⌘C</kbd> to open Hopback's search in <strong>History</strong> mode. It covers every Claude Code conversation on the Mac.</p>
+<ul>
+<li>Type to filter by <strong>title</strong> and <strong>folder</strong>.</li>
+<li>With <strong>three or more characters</strong> Hopback also searches the <strong>conversation text</strong>. Those matches come after title matches and show a snippet around the hit.</li>
+<li><kbd>↑</kbd>/<kbd>↓</kbd> select, <kbd>⏎</kbd> goes to the session, <kbd>Esc</kbd> closes.</li>
+<li><kbd>⇥</kbd> switches between <strong>Open sessions</strong> (running or shown in a window, also <kbd>⌃⌘C</kbd>) and History.</li>
+</ul>
+<p>Selecting a result opens the folder in VS Code and then that conversation, or raises the window if one already shows it.</p>
+
+<h2>Describe it: Ask Claude</h2>
+<p>If you cannot remember any exact words, type <code>?</code> and describe the session, for example <code>? the one where we fixed the flaky login test</code>. You can also pick <strong>Ask Claude</strong> at the end of the history list. Hopback runs <code>claude -p</code> over its history index with read-only tools (Read, Grep, Glob) and shows the sessions Claude picks, each with a one-line reason. <kbd>Esc</kbd> or Cancel stops it.</p>
+<p>Ask uses your own Claude Code login, so it counts towards your usage like any other prompt. Hopback finds <code>claude</code> on your login shell's PATH, then in <code>/opt/homebrew/bin</code>, <code>/usr/local/bin</code> and <code>~/.local/bin</code>, and you can set the path in Settings, then General.</p>
+
+<h2>What is stored, and where</h2>
+<p>For text search Hopback builds an index of your conversation text. The first time it says "Building the history index..." and runs in the background. Afterwards it re-reads only conversations that changed. It stays on your Mac:</p>
+<table>
+<tr><th>What</th><th>Where</th></tr>
+<tr><td>History index (copies of conversation text)</td><td><code>~/Library/Caches/se.zexa.hopback/</code></td></tr>
+<tr><td>Settings</td><td><code>~/Library/Application Support/se.zexa.hopback/</code></td></tr>
+<tr><td>Log (never conversation text)</td><td><code>~/Library/Logs/Hopback/</code></td></tr>
+</table>
+<p>Hopback sends nothing anywhere except the update check against GitHub and Ask, which runs your own <code>claude</code>.</p>
+<p>Get Hopback from the <a href="https://github.com/aaronsuns/hopback/releases/latest">latest release</a>. See also <a href="/claude-code-session-switcher-vs-code">switching between sessions</a>.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>Does Hopback search the text of conversations?</h3>
+<p>Yes. With three or more characters it also searches conversation text, after title matches, and shows a snippet around the hit.</p>
+<h3>What does Ask Claude do?</h3>
+<p>It runs your own claude command over Hopback's history index with read-only tools and returns the sessions it thinks match your description, each with a reason. It counts towards your Claude usage.</p>
+<h3>Is my conversation text uploaded?</h3>
+<p>Hopback does not upload it. The index is stored in your Mac's cache folder. Only the optional Ask feature involves Claude, through your own login.</p>
+<h3>Can I open a past session in VS Code from the search?</h3>
+<p>Yes. Pressing Return opens the folder in VS Code and then the conversation, or raises the window that already shows it.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+</main>
+<footer>
+<p><strong>More from Hopback</strong></p>
+<ul><li><a href="/">Hopback home page</a></li><li><a href="/claude-code-session-switcher-vs-code">Claude Code session switcher for VS Code</a></li><li><a href="/claude-code-notifications-macos">Claude Code notifications on macOS</a></li><li><a href="/claude-code-multiple-windows-vs-code">Claude Code in multiple VS Code windows</a></li><li><a href="/claude-code-hooks-session-status">Claude Code hooks for session status</a></li></ul>
+<p>Made by Aaron Sun · <a href="https://zexa.se">Zexa</a> · <a href="https://github.com/aaronsuns/hopback">GitHub</a><br>Hopback is an independent project, not affiliated with, endorsed by or supported by Anthropic. "Claude" and "Claude Code" are Anthropic's names for their products.</p>
+</footer>
+</body>
+</html>

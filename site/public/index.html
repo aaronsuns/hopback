@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hopback — menu bar app for Claude Code sessions in VS Code (macOS)</title>
-<meta name="description" content="Free macOS menu bar app: see which Claude Code session each VS Code window shows, know when one waits for you, and jump back with a hotkey.">
+<title>Hopback: Claude Code session switcher for VS Code on Mac</title>
+<meta name="description" content="Free macOS menu bar app for Claude Code in VS Code: see which session each window shows, get notified when one waits for you, and jump back with a hotkey.">
 <link rel="canonical" href="https://hopback.zexa.se/">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#2b5cc8">
@@ -13,8 +13,8 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Hopback">
-<meta property="og:title" content="Hopback — get back to your Claude Code sessions in VS Code">
-<meta property="og:description" content="A free, open-source macOS menu bar app that shows which session needs you and takes you there with a hotkey.">
+<meta property="og:title" content="Hopback: Claude Code session switcher for VS Code on Mac">
+<meta property="og:description" content="Claude Code session switcher and notifications for VS Code on Mac: see who needs you, jump back with a hotkey, search every session. Free, open source.">
 <meta property="og:url" content="https://hopback.zexa.se/">
 <meta property="og:image" content="https://hopback.zexa.se/img/og.png">
 <meta property="og:image:width" content="1200">
@@ -38,6 +38,46 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "author": { "@type": "Person", "name": "Aaron Sun" },
   "publisher": { "@type": "Organization", "name": "Zexa", "url": "https://zexa.se" }
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Does Hopback work with Cursor?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Not yet. It supports Visual Studio Code with the Claude Code extension. Cursor and VS Code Insiders are not supported yet."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Do I need the Claude Code plugin?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes, for the status glyphs and banners: the plugin tells Hopback when a session is working or waiting. Without it Hopback still lists your windows and searches history."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Does Hopback send my conversations anywhere?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. It runs on your Mac and sends nothing, except the update check against GitHub and Ask, which runs your own claude."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Is Hopback from Anthropic?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. It is an independent open-source project and is not affiliated with, endorsed by or supported by Anthropic."
+   }
+  }
+ ]
 }
 </script>
 <style>
@@ -196,6 +236,17 @@ footer a { color: var(--muted); }
   .menu { font-size: 12.5px; }
   .menu .row { grid-template-columns: 20px 1fr auto; padding: 4px 8px; }
 }
+
+.guides h3 { margin: 18px 0 4px; font-size: 17px; }
+.guides p { margin: 0 0 8px; }
+.guide-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.guide-list a { display: block; height: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: inherit; text-decoration: none; }
+.guide-list a:hover { border-color: var(--accent); }
+.guide-list b { display: block; margin-bottom: 4px; color: var(--accent); }
+.guide-list span { color: var(--muted); font-size: 14.5px; }
+
+.footguides { flex-basis: 100%; font-size: 14px; line-height: 1.9; margin: 0 0 12px; }
+.footguides a { color: inherit; margin-right: 4px; }
 </style>
 </head>
 <body>
@@ -205,6 +256,7 @@ footer a { color: var(--muted); }
     <nav class="links">
       <a href="#features" class="hide-sm">Features</a>
       <a href="#install">Install</a>
+      <a href="#guides" class="hide-sm">Guides</a>
       <a href="https://github.com/aaronsuns/hopback">GitHub</a>
     </nav>
   </div>
@@ -316,6 +368,34 @@ claude plugin install hopback@hopback</code></pre>
   </div>
 </section>
 
+<section id="guides" class="guides">
+  <div class="wrap">
+    <h2>Guides</h2>
+    <p class="intro">How-tos for running several Claude Code sessions in VS Code on a Mac: switching, notifications, history search and hooks.</p>
+    <ul class="guide-list">
+      <li><a href="/claude-code-session-switcher-vs-code"><b>Claude Code session switcher for VS Code</b><span>Switch between Claude Code sessions in VS Code with a hotkey. Hopback shows which session each window is on, who needs you, and jumps back to any session.</span></a></li>
+      <li><a href="/claude-code-notifications-macos"><b>Claude Code notifications on macOS</b><span>Get a macOS banner when Claude Code needs approval or an answer, and a menu bar count of waiting sessions. Hooks, DIY options and Hopback compared.</span></a></li>
+      <li><a href="/claude-code-multiple-windows-vs-code"><b>Claude Code in multiple VS Code windows</b><span>Running Claude Code in several VS Code windows? Tips to keep track: one window per folder, stable window numbers, a needs-you list and hotkeys to jump back.</span></a></li>
+      <li><a href="/search-claude-code-history"><b>Search Claude Code history</b><span>Find any past Claude Code conversation on your Mac by title, folder or text, resume it from VS Code, or describe it in words and let Claude find it with Hopback.</span></a></li>
+      <li><a href="/claude-code-hooks-session-status"><b>Claude Code hooks for session status</b><span>How the Hopback plugin uses Claude Code hook events to know when a session is working or waiting, what it writes to disk, and how to check or remove it.</span></a></li>
+    </ul>
+  </div>
+</section>
+
+<section id="faq" class="guides">
+  <div class="wrap">
+    <h2>Frequently asked questions</h2>
+      <h3>Does Hopback work with Cursor?</h3>
+      <p>Not yet. It supports Visual Studio Code with the Claude Code extension. Cursor and VS Code Insiders are not supported yet.</p>
+      <h3>Do I need the Claude Code plugin?</h3>
+      <p>Yes, for the status glyphs and banners: the plugin tells Hopback when a session is working or waiting. Without it Hopback still lists your windows and searches history.</p>
+      <h3>Does Hopback send my conversations anywhere?</h3>
+      <p>No. It runs on your Mac and sends nothing, except the update check against GitHub and Ask, which runs your own <code>claude</code>.</p>
+      <h3>Is Hopback from Anthropic?</h3>
+      <p>No. It is an independent open-source project and is not affiliated with, endorsed by or supported by Anthropic.</p>
+  </div>
+</section>
+
 <section id="open-source">
   <div class="wrap">
     <div class="oss">
@@ -335,7 +415,8 @@ claude plugin install hopback@hopback</code></pre>
 
 <footer>
   <div class="wrap">
-    <span>Made by Aaron Sun · <a href="https://zexa.se">Zexa</a></span>
+    <nav aria-label="Guides" class="footguides"><strong>Guides:</strong> <a href="/claude-code-session-switcher-vs-code">Claude Code session switcher for VS Code</a> · <a href="/claude-code-notifications-macos">Claude Code notifications on macOS</a> · <a href="/claude-code-multiple-windows-vs-code">Claude Code in multiple VS Code windows</a> · <a href="/search-claude-code-history">Search Claude Code history</a> · <a href="/claude-code-hooks-session-status">Claude Code hooks for session status</a></nav>
+<span>Made by Aaron Sun · <a href="https://zexa.se">Zexa</a></span>
     <span><a href="https://github.com/aaronsuns/hopback">GitHub</a> · <a href="https://github.com/aaronsuns/hopback/blob/main/LICENSE">MIT licence</a></span>
   </div>
 </footer>

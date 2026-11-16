@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code in multiple VS Code windows: stay organized</title>
+<meta name="description" content="Running Claude Code in several VS Code windows? Tips to keep track: one window per folder, stable window numbers, a needs-you list and hotkeys to jump back.">
+<link rel="canonical" href="https://hopback.zexa.se/claude-code-multiple-windows-vs-code">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Claude Code in multiple VS Code windows: stay organized">
+<meta property="og:description" content="Running Claude Code in several VS Code windows? Tips to keep track: one window per folder, stable window numbers, a needs-you list and hotkeys to jump back.">
+<meta property="og:url" content="https://hopback.zexa.se/claude-code-multiple-windows-vs-code">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://hopback.zexa.se/img/og.png">
+<meta property="og:site_name" content="Hopback">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/guide.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
+  {
+   "@type": "ListItem",
+   "position": 1,
+   "name": "Hopback",
+   "item": "https://hopback.zexa.se/"
+  },
+  {
+   "@type": "ListItem",
+   "position": 2,
+   "name": "Claude Code in multiple VS Code windows",
+   "item": "https://hopback.zexa.se/claude-code-multiple-windows-vs-code"
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "How are the window numbers chosen?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Hopback numbers VS Code windows from A to Z by folder name, as shown in the menu, and ⌃⌥1 to ⌃⌥9 go to windows 1 to 9. You can change the shortcuts in Settings."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Can Hopback raise a window on another Space?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. If a window shows the session, Hopback brings it to the front even from another Space. Otherwise it opens the folder in VS Code and then the conversation."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Why is the session shown for a window sometimes wrong?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "VS Code saves which conversation a window shows every so often, not instantly, so Hopback can lag a few seconds. Until then it guesses the most recently active session in that folder."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Does it need special permissions?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accessibility, so Hopback can list VS Code's windows and raise one, and notification permission for banners."
+   }
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Article",
+ "headline": "Running Claude Code in multiple VS Code windows",
+ "url": "https://hopback.zexa.se/claude-code-multiple-windows-vs-code",
+ "inLanguage": "en",
+ "author": {
+  "@type": "Person",
+  "name": "Aaron Sun"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Zexa",
+  "url": "https://zexa.se"
+ },
+ "datePublished": "2026-11-16",
+ "dateModified": "2026-11-16"
+}
+</script>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="/"><img src="/icon-192.png" alt="" width="28" height="28">Hopback</a>
+  <nav><a href="/#guides">Guides</a><a href="https://github.com/aaronsuns/hopback">GitHub</a></nav>
+</div></div>
+<main>
+<p class="crumbs"><a href="/">Hopback</a> / Claude Code in multiple VS Code windows</p>
+<h1>Running Claude Code in multiple VS Code windows</h1>
+<p class="lead">One window per project is the natural way to run several Claude Code sessions at once. It also makes it easy to lose the thread. Here is a workflow that keeps it manageable.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+
+<h2>One folder, one window, one session</h2>
+<p>The simplest rule is to keep each project in its own VS Code window with its own Claude Code conversation. It keeps context clean, and it lets you reason about state: this window is the API, that one is the docs. The trouble starts around the fourth window, when the Dock shows identical icons and you cannot tell which one is blocked.</p>
+
+<h2>Give every window a stable number</h2>
+<p>Hopback numbers your VS Code windows from A to Z by folder name and keeps that order, so the number of a project does not change when you reorder windows with the mouse. The menu lists them as 1, 2, 3 and so on, each with the session it shows. Press <kbd>⌃⌥1</kbd> to <kbd>⌃⌥9</kbd> to go to that window, from any app and any Space. <kbd>⌃⌥⇥</kbd> and <kbd>⌃⌥⇧⇥</kbd> step to the next and previous VS Code window.</p>
+
+<h2>Always know which session needs you</h2>
+<p>The menu bar summary, for example <code>⚠1 ⚙2 · ▢8</code>, counts sessions waiting for approval (⚠), working (⚙) and the VS Code windows showing a Claude Code session (▢). Press <kbd>⌃⌥0</kbd> to go to the next session that needs you, and press it again for the one after. The <strong>Needs you</strong> section lists those sessions even when no window currently shows them. A banner tells you at the moment a session starts waiting. See <a href="/claude-code-notifications-macos">Claude Code notifications on macOS</a>.</p>
+
+<h2>Sessions with no window</h2>
+<p>Some sessions are busy but not shown in any window, for instance a session started in a terminal. Hopback lists them under <strong>Working in background</strong>, so you can see them and jump to them. Clicking one opens its folder in VS Code and then the conversation.</p>
+
+<h2>Get back to an old session</h2>
+<p>Closed a window and now need that conversation? Press <kbd>⌃⇧⌘C</kbd> and type part of the title or the folder. With three or more characters Hopback also searches the conversation text and shows a snippet around the hit. Details in <a href="/search-claude-code-history">searching Claude Code history</a>.</p>
+
+<h2>A practical routine</h2>
+<ol>
+<li>Start each task in a window named for its folder, and let Claude Code run.</li>
+<li>Work in the foreground window; glance at the menu bar count.</li>
+<li>When the count shows a warning, press <kbd>⌃⌥0</kbd>, approve or answer, and go back.</li>
+<li>When a task is done, close the window; the conversation stays searchable in history.</li>
+</ol>
+<p>Hopback is free and open source. Get it from the <a href="https://github.com/aaronsuns/hopback/releases/latest">latest release</a>. Overview: <a href="/claude-code-session-switcher-vs-code">Claude Code session switcher for VS Code</a>.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>How are the window numbers chosen?</h3>
+<p>Hopback numbers VS Code windows from A to Z by folder name, as shown in the menu, and ⌃⌥1 to ⌃⌥9 go to windows 1 to 9. You can change the shortcuts in Settings.</p>
+<h3>Can Hopback raise a window on another Space?</h3>
+<p>Yes. If a window shows the session, Hopback brings it to the front even from another Space. Otherwise it opens the folder in VS Code and then the conversation.</p>
+<h3>Why is the session shown for a window sometimes wrong?</h3>
+<p>VS Code saves which conversation a window shows every so often, not instantly, so Hopback can lag a few seconds. Until then it guesses the most recently active session in that folder.</p>
+<h3>Does it need special permissions?</h3>
+<p>Accessibility, so Hopback can list VS Code's windows and raise one, and notification permission for banners.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+</main>
+<footer>
+<p><strong>More from Hopback</strong></p>
+<ul><li><a href="/">Hopback home page</a></li><li><a href="/claude-code-session-switcher-vs-code">Claude Code session switcher for VS Code</a></li><li><a href="/claude-code-notifications-macos">Claude Code notifications on macOS</a></li><li><a href="/search-claude-code-history">Search Claude Code history</a></li><li><a href="/claude-code-hooks-session-status">Claude Code hooks for session status</a></li></ul>
+<p>Made by Aaron Sun · <a href="https://zexa.se">Zexa</a> · <a href="https://github.com/aaronsuns/hopback">GitHub</a><br>Hopback is an independent project, not affiliated with, endorsed by or supported by Anthropic. "Claude" and "Claude Code" are Anthropic's names for their products.</p>
+</footer>
+</body>
+</html>

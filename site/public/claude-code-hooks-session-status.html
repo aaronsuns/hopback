@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code hooks for session status: how Hopback works</title>
+<meta name="description" content="How the Hopback plugin uses Claude Code hook events to know when a session is working or waiting, what it writes to disk, and how to check or remove it.">
+<link rel="canonical" href="https://hopback.zexa.se/claude-code-hooks-session-status">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Claude Code hooks for session status: how Hopback works">
+<meta property="og:description" content="How the Hopback plugin uses Claude Code hook events to know when a session is working or waiting, what it writes to disk, and how to check or remove it.">
+<meta property="og:url" content="https://hopback.zexa.se/claude-code-hooks-session-status">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://hopback.zexa.se/img/og.png">
+<meta property="og:site_name" content="Hopback">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/guide.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
+  {
+   "@type": "ListItem",
+   "position": 1,
+   "name": "Hopback",
+   "item": "https://hopback.zexa.se/"
+  },
+  {
+   "@type": "ListItem",
+   "position": 2,
+   "name": "Claude Code hooks for session status",
+   "item": "https://hopback.zexa.se/claude-code-hooks-session-status"
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Is the Hopback plugin safe to install?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "It runs one small program from Hopback.app on Claude Code hook events and writes a status file per session to ~/.claude/hopback/. The source is on GitHub under the MIT licence so you can read it."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Does the plugin slow Claude Code down?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Each hook has a 5 second timeout, and the command only runs the Hopback program if it is installed. Otherwise it discards its input and exits."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Why do sessions not show warnings?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Install the plugin and then start a new session. Sessions that were already open do not load new plugins. Diagnostics in the Hopback menu shows whether the plugin has run."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Does the plugin read my conversation?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "The plugin writes status files only. Conversation text is read separately by Hopback's history index on your Mac, for search, and is never written to its log."
+   }
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Article",
+ "headline": "Using Claude Code hooks to track session status",
+ "url": "https://hopback.zexa.se/claude-code-hooks-session-status",
+ "inLanguage": "en",
+ "author": {
+  "@type": "Person",
+  "name": "Aaron Sun"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Zexa",
+  "url": "https://zexa.se"
+ },
+ "datePublished": "2026-11-16",
+ "dateModified": "2026-11-16"
+}
+</script>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="/"><img src="/icon-192.png" alt="" width="28" height="28">Hopback</a>
+  <nav><a href="/#guides">Guides</a><a href="https://github.com/aaronsuns/hopback">GitHub</a></nav>
+</div></div>
+<main>
+<p class="crumbs"><a href="/">Hopback</a> / Claude Code hooks for session status</p>
+<h1>Using Claude Code hooks to track session status</h1>
+<p class="lead">Claude Code runs commands for you at defined moments in a session. Hopback uses those hooks to learn whether each session is working or waiting. This is how it works, in enough detail to trust it.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+
+<h2>What Claude Code hooks are</h2>
+<p>Hooks are commands that Claude Code runs on events in a session, for example when a session starts, before a tool runs, when it needs permission or when a turn ends. They are configured in settings or shipped in a plugin. They are the supported way to react to what a session is doing from outside Claude Code.</p>
+
+<h2>The events Hopback listens to</h2>
+<p>The Hopback plugin registers a hook for these events: <code>SessionStart</code>, <code>UserPromptSubmit</code>, <code>PreToolUse</code>, <code>PermissionRequest</code>, <code>PostToolUse</code>, <code>PostToolUseFailure</code>, <code>Notification</code>, <code>Stop</code> and <code>SessionEnd</code>. From that sequence Hopback can tell the four states it shows:</p>
+<table>
+<tr><th>State</th><th>Glyph</th></tr>
+<tr><td>waiting to approve a tool call</td><td>⚠️</td></tr>
+<tr><td>waiting for an answer or a plan review</td><td>❓</td></tr>
+<tr><td>working</td><td>⚙️</td></tr>
+<tr><td>finished its turn, nothing pending</td><td>💤</td></tr>
+</table>
+
+<h2>What the plugin does with each event</h2>
+<p>Each hook runs a tiny program that lives inside Hopback.app, <code>hopback-hook</code>. It writes one small status file per session to <code>~/.claude/hopback/</code> and nothing else. If Hopback is not installed the hook command checks that the program exists and otherwise just discards its input, so the plugin does nothing and does not slow Claude Code down.</p>
+
+<h2>Install the plugin</h2>
+<p>The welcome window's <strong>Install plugin</strong> button does it for you. By hand, run these in a terminal (the Claude Code panel in VS Code has no <code>/plugin</code> command):</p>
+<pre><code>claude plugin marketplace add aaronsuns/hopback
+claude plugin install hopback@hopback</code></pre>
+<p>Then open a new Claude Code session or reload the VS Code window, because sessions that were already open do not load new plugins.</p>
+
+<h2>Check that it works</h2>
+<p>Open <strong>Diagnostics</strong> from the Hopback menu. It shows whether the plugin is installed and has run, and <strong>Copy report</strong> gives you text for a bug report that contains no conversation text. If sessions never show ⚠️ or ❓, the usual cause is that the plugin is missing or that the session started before it was installed.</p>
+
+<h2>Remove it</h2>
+<p>Uninstall with <code>claude plugin uninstall hopback@hopback</code> and remove the marketplace, then delete <code>~/.claude/hopback</code> if you want the status files gone. The README has the full list of what to remove.</p>
+
+<p>What this enables: <a href="/claude-code-notifications-macos">notifications when Claude Code is waiting</a> and the <a href="/claude-code-session-switcher-vs-code">session switcher for VS Code</a>. Get Hopback from the <a href="https://github.com/aaronsuns/hopback/releases/latest">latest release</a>.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>Is the Hopback plugin safe to install?</h3>
+<p>It runs one small program from Hopback.app on Claude Code hook events and writes a status file per session to ~/.claude/hopback/. The source is on GitHub under the MIT licence so you can read it.</p>
+<h3>Does the plugin slow Claude Code down?</h3>
+<p>Each hook has a 5 second timeout, and the command only runs the Hopback program if it is installed. Otherwise it discards its input and exits.</p>
+<h3>Why do sessions not show warnings?</h3>
+<p>Install the plugin and then start a new session. Sessions that were already open do not load new plugins. Diagnostics in the Hopback menu shows whether the plugin has run.</p>
+<h3>Does the plugin read my conversation?</h3>
+<p>The plugin writes status files only. Conversation text is read separately by Hopback's history index on your Mac, for search, and is never written to its log.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+</main>
+<footer>
+<p><strong>More from Hopback</strong></p>
+<ul><li><a href="/">Hopback home page</a></li><li><a href="/claude-code-session-switcher-vs-code">Claude Code session switcher for VS Code</a></li><li><a href="/claude-code-notifications-macos">Claude Code notifications on macOS</a></li><li><a href="/claude-code-multiple-windows-vs-code">Claude Code in multiple VS Code windows</a></li><li><a href="/search-claude-code-history">Search Claude Code history</a></li></ul>
+<p>Made by Aaron Sun · <a href="https://zexa.se">Zexa</a> · <a href="https://github.com/aaronsuns/hopback">GitHub</a><br>Hopback is an independent project, not affiliated with, endorsed by or supported by Anthropic. "Claude" and "Claude Code" are Anthropic's names for their products.</p>
+</footer>
+</body>
+</html>
