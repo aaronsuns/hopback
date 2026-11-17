@@ -47,6 +47,14 @@ When a session starts waiting for you, Hopback shows a banner. Click it to go to
 
 ## Install
 
+**Homebrew** (clears the quarantine flag for you):
+
+```sh
+brew install --cask aaronsuns/tap/hopback
+```
+
+Or by hand:
+
 1. Download `Hopback.dmg` from the [latest release](https://github.com/aaronsuns/hopback/releases/latest)
    and drag Hopback to Applications.
 2. Hopback is not notarized by Apple yet, so macOS will refuse to open it the first time. Clear the
