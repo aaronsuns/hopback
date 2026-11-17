@@ -11,8 +11,9 @@ Guides: [Claude Code session switcher for VS Code](https://hopback.zexa.se/claud
 > Hopback is an independent open-source project. It is not affiliated with, endorsed by or
 > supported by Anthropic. "Claude" and "Claude Code" are Anthropic's names for their products.
 
-<!-- TODO: add docs/screenshot.png (the open menu) with the first release and show it here. -->
-*Screenshot coming with the first release.*
+<img src="docs/shot-open-light.png" width="560" alt="Hopback session search: sessions waiting for you first">
+
+*Demo data.*
 
 ## What it does
 
