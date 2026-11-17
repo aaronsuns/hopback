@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://hopback.zexa.se/</loc><lastmod>2026-11-16</lastmod></url>
-  <url><loc>https://hopback.zexa.se/claude-code-hooks-session-status</loc><lastmod>2026-11-16</lastmod></url>
-  <url><loc>https://hopback.zexa.se/claude-code-multiple-windows-vs-code</loc><lastmod>2026-11-16</lastmod></url>
-  <url><loc>https://hopback.zexa.se/claude-code-notifications-macos</loc><lastmod>2026-11-16</lastmod></url>
-  <url><loc>https://hopback.zexa.se/claude-code-session-switcher-vs-code</loc><lastmod>2026-11-16</lastmod></url>
-  <url><loc>https://hopback.zexa.se/search-claude-code-history</loc><lastmod>2026-11-16</lastmod></url>
+  <url><loc>https://hopback.zexa.se/</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://hopback.zexa.se/claude-code-hooks-session-status</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://hopback.zexa.se/claude-code-keyboard-shortcuts-vs-code</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://hopback.zexa.se/claude-code-multiple-windows-vs-code</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://hopback.zexa.se/claude-code-notifications-macos</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://hopback.zexa.se/claude-code-session-switcher-vs-code</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://hopback.zexa.se/claude-code-waiting-for-permission</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://hopback.zexa.se/install-hopback-mac</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://hopback.zexa.se/search-claude-code-history</loc><lastmod>2026-11-17</lastmod></url>
 </urlset>

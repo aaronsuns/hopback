@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install Hopback on Mac: Homebrew or dmg, and the first-run steps</title>
+<meta name="description" content="Install Hopback with one Homebrew command or the dmg, get past the macOS warning for a non-notarized app, and finish the welcome steps.">
+<link rel="canonical" href="https://hopback.zexa.se/install-hopback-mac">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Install Hopback on Mac: Homebrew or dmg, and the first-run steps">
+<meta property="og:description" content="Install Hopback with one Homebrew command or the dmg, get past the macOS warning for a non-notarized app, and finish the welcome steps.">
+<meta property="og:url" content="https://hopback.zexa.se/install-hopback-mac">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://hopback.zexa.se/img/og.png">
+<meta property="og:site_name" content="Hopback">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/guide.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
+  {
+   "@type": "ListItem",
+   "position": 1,
+   "name": "Hopback",
+   "item": "https://hopback.zexa.se/"
+  },
+  {
+   "@type": "ListItem",
+   "position": 2,
+   "name": "Install Hopback on Mac",
+   "item": "https://hopback.zexa.se/install-hopback-mac"
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Is Hopback safe to open if it is not notarized?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "The source is on GitHub under the MIT licence and releases are built by GitHub Actions. macOS warns because the app has not been through Apple's notarization, which needs a paid developer account."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "How do I uninstall Hopback?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Quit it from its menu, move it to the Trash, and in Claude Code run /plugin uninstall hopback@hopback and /plugin marketplace remove hopback."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Does it update itself?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. It checks for updates at start and every 6 hours, and installs them in the background by default."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Which macOS versions work?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "macOS 13 (Ventura) or newer, on Apple silicon or Intel."
+   }
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Article",
+ "headline": "Install Hopback on Mac: Homebrew or dmg, and the first-run steps",
+ "url": "https://hopback.zexa.se/install-hopback-mac",
+ "inLanguage": "en",
+ "image": "https://hopback.zexa.se/img/shot-open-light.png",
+ "author": {
+  "@type": "Person",
+  "name": "Aaron Sun"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Zexa",
+  "url": "https://zexa.se"
+ },
+ "datePublished": "2026-11-17",
+ "dateModified": "2026-11-17"
+}
+</script>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="/"><img src="/icon-192.png" alt="" width="28" height="28">Hopback</a>
+  <nav><a href="/#guides">Guides</a><a href="https://github.com/aaronsuns/hopback">GitHub</a></nav>
+</div></div>
+<main>
+<p class="crumbs"><a href="/">Hopback</a> / Install Hopback on Mac</p>
+<h1>Install Hopback on Mac: Homebrew or dmg, and the first-run steps</h1>
+<p class="lead">Hopback is free and open source. This page covers both install routes, why macOS warns the first time, and what to click in the welcome window.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+<p><img src="/img/shot-open-light.png" alt="Hopback&#x27;s session search: sessions waiting for you are listed first" width="560" style="max-width:100%;height:auto;border-radius:10px"></p>
+<h2>Option 1: Homebrew</h2>
+<pre><code>brew install --cask aaronsuns/tap/hopback</code></pre>
+<p>The cask also clears the quarantine flag for you, so Hopback opens right away.</p>
+<h2>Option 2: the dmg</h2>
+<ol>
+<li>Download <code>Hopback.dmg</code> from the <a href="https://github.com/aaronsuns/hopback/releases/latest">latest release</a> and drag Hopback to Applications. It needs macOS 13 (Ventura) or newer, Apple silicon or Intel.</li>
+<li>Hopback is not notarized by Apple yet (that needs a paid Apple developer account), so macOS refuses to open it the first time. Clear the quarantine flag once in Terminal: <code>xattr -dr com.apple.quarantine /Applications/Hopback.app</code></li>
+<li>Open Hopback.</li>
+</ol>
+<h2>The welcome window</h2>
+<p>It ticks each step off by itself:</p>
+<ul>
+<li><strong>Accessibility</strong>: lets Hopback list VS Code's windows and raise one. Click Open System Settings, find Hopback and switch it on.</li>
+<li><strong>Claude Code plugin</strong>: click Install plugin. By hand it is <code>claude plugin marketplace add aaronsuns/hopback</code> and <code>claude plugin install hopback@hopback</code>. Open a new session afterwards: sessions already open do not load new plugins.</li>
+<li><strong>Notifications</strong>: click Send test banner and allow Hopback if macOS asks.</li>
+<li><strong>Start at login</strong>: on by default.</li>
+</ul>
+<h2>Requirements</h2>
+<p>Visual Studio Code with the Claude Code extension. Cursor and VS Code Insiders are not supported yet.</p>
+<h2>If sessions never show a waiting glyph</h2>
+<p>Install the plugin, then restart your sessions. Diagnostics in the menu shows whether the plugin is installed and has run.</p>
+<h2>Frequently asked questions</h2>
+<h3>Is Hopback safe to open if it is not notarized?</h3>
+<p>The source is on GitHub under the MIT licence and releases are built by GitHub Actions. macOS warns because the app has not been through Apple&#x27;s notarization, which needs a paid developer account.</p>
+<h3>How do I uninstall Hopback?</h3>
+<p>Quit it from its menu, move it to the Trash, and in Claude Code run /plugin uninstall hopback@hopback and /plugin marketplace remove hopback.</p>
+<h3>Does it update itself?</h3>
+<p>Yes. It checks for updates at start and every 6 hours, and installs them in the background by default.</p>
+<h3>Which macOS versions work?</h3>
+<p>macOS 13 (Ventura) or newer, on Apple silicon or Intel.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+</main>
+<footer>
+<p><strong>More from Hopback</strong></p>
+<ul><li><a href="/">Hopback home page</a></li><li><a href="/claude-code-hooks-session-status">Claude Code hooks for session status: how Hopback works</a></li><li><a href="/claude-code-keyboard-shortcuts-vs-code">Keyboard shortcuts for Claude Code in VS Code windows on Mac</a></li><li><a href="/claude-code-multiple-windows-vs-code">Claude Code in multiple VS Code windows: stay organized</a></li><li><a href="/claude-code-notifications-macos">Claude Code notifications on macOS: know when it waits</a></li><li><a href="/claude-code-session-switcher-vs-code">Claude Code session switcher for VS Code on Mac - Hopback</a></li><li><a href="/claude-code-waiting-for-permission">Claude Code is waiting for permission: how to notice it</a></li><li><a href="/search-claude-code-history">Search Claude Code history and find an old session</a></li></ul>
+<p>Made by Aaron Sun · <a href="https://zexa.se">Zexa</a> · <a href="https://github.com/aaronsuns/hopback">GitHub</a><br>Hopback is an independent project, not affiliated with, endorsed by or supported by Anthropic. "Claude" and "Claude Code" are Anthropic's names for their products.</p>
+</footer>
+</body>
+</html>

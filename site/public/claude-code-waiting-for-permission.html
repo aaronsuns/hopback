@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code is waiting for permission: how to notice it</title>
+<meta name="description" content="Claude Code waits when it needs approval or an answer. Notice it across VS Code windows with a menu bar glyph, a banner and one hotkey.">
+<link rel="canonical" href="https://hopback.zexa.se/claude-code-waiting-for-permission">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Claude Code is waiting for permission: how to notice it">
+<meta property="og:description" content="Claude Code waits when it needs approval or an answer. Notice it across VS Code windows with a menu bar glyph, a banner and one hotkey.">
+<meta property="og:url" content="https://hopback.zexa.se/claude-code-waiting-for-permission">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://hopback.zexa.se/img/og.png">
+<meta property="og:site_name" content="Hopback">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/guide.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
+  {
+   "@type": "ListItem",
+   "position": 1,
+   "name": "Hopback",
+   "item": "https://hopback.zexa.se/"
+  },
+  {
+   "@type": "ListItem",
+   "position": 2,
+   "name": "Claude Code waiting for permission",
+   "item": "https://hopback.zexa.se/claude-code-waiting-for-permission"
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Does Claude Code notify me when it needs permission?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Claude Code shows the prompt in its own panel. If that window is hidden you have to look for it yourself. Hopback adds a menu bar glyph, a macOS banner and a hotkey that takes you to the waiting session."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Which sessions count as needing me?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Sessions waiting to approve a tool call, to get an answer to a question, or to have a plan reviewed."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Can I turn the banners off?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. Banners for approvals and for questions are separate switches in Settings."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Does it work with Cursor?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Not yet. Hopback supports Visual Studio Code with the Claude Code extension."
+   }
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Article",
+ "headline": "Claude Code is waiting for permission: how to notice it",
+ "url": "https://hopback.zexa.se/claude-code-waiting-for-permission",
+ "inLanguage": "en",
+ "image": "https://hopback.zexa.se/img/shot-open-light.png",
+ "author": {
+  "@type": "Person",
+  "name": "Aaron Sun"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Zexa",
+  "url": "https://zexa.se"
+ },
+ "datePublished": "2026-11-17",
+ "dateModified": "2026-11-17"
+}
+</script>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="/"><img src="/icon-192.png" alt="" width="28" height="28">Hopback</a>
+  <nav><a href="/#guides">Guides</a><a href="https://github.com/aaronsuns/hopback">GitHub</a></nav>
+</div></div>
+<main>
+<p class="crumbs"><a href="/">Hopback</a> / Claude Code waiting for permission</p>
+<h1>Claude Code is waiting for permission: how to notice it</h1>
+<p class="lead">You start a task, switch to another window, and come back to find Claude Code has been waiting for your approval for twenty minutes. Here is how to stop that from happening.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+<p><img src="/img/shot-open-light.png" alt="Hopback&#x27;s session search: sessions waiting for you are listed first" width="560" style="max-width:100%;height:auto;border-radius:10px"></p>
+<h2>Why a session waits without you noticing</h2>
+<p>Claude Code pauses when it wants to run a tool that needs your permission, when it asks you a question, or when it has a plan for you to review. If the VS Code window is behind another one, or on another Space, nothing tells you. The session simply sits there and the work stops.</p>
+<h2>What Hopback shows</h2>
+<p>Hopback adds a short summary to the Mac menu bar, for example <code>⚠1 ⚙2 · ▢8</code>: one session needs you, two are working, and eight VS Code windows show a Claude Code session.</p>
+<table>
+<tr><th>Glyph</th><th>Meaning</th></tr>
+<tr><td>⚠️</td><td>waiting for you to approve a tool call</td></tr>
+<tr><td>❓</td><td>waiting for an answer to a question, or for a plan to be reviewed</td></tr>
+<tr><td>⚙️</td><td>working</td></tr>
+<tr><td>💤</td><td>finished its turn, nothing pending</td></tr>
+</table>
+<p>The <strong>Needs you</strong> section of the menu lists every waiting session, whether a window shows it or not.</p>
+<h2>Get a banner and jump straight to it</h2>
+<p>When a session starts waiting, Hopback shows a macOS banner. Click it to go to that session: if a window shows it, Hopback raises that window, even from another Space; otherwise it opens the folder in VS Code and then the conversation. Press <kbd>⌃⌥0</kbd> to go to the next session that needs you, and again for the one after. Banners for approvals and for questions can be switched off separately in Settings.</p>
+<h2>How Hopback knows</h2>
+<p>A small Claude Code plugin reports the hook events (a session working, waiting, finished). It writes one small status file per session to <code>~/.claude/hopback/</code> and nothing else. See <a href="/claude-code-hooks-session-status">Claude Code hooks for session status</a> for the details.</p>
+<p>New to Hopback? <a href="/install-hopback-mac">Install it with Homebrew or the dmg</a>.</p>
+<h2>Frequently asked questions</h2>
+<h3>Does Claude Code notify me when it needs permission?</h3>
+<p>Claude Code shows the prompt in its own panel. If that window is hidden you have to look for it yourself. Hopback adds a menu bar glyph, a macOS banner and a hotkey that takes you to the waiting session.</p>
+<h3>Which sessions count as needing me?</h3>
+<p>Sessions waiting to approve a tool call, to get an answer to a question, or to have a plan reviewed.</p>
+<h3>Can I turn the banners off?</h3>
+<p>Yes. Banners for approvals and for questions are separate switches in Settings.</p>
+<h3>Does it work with Cursor?</h3>
+<p>Not yet. Hopback supports Visual Studio Code with the Claude Code extension.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+</main>
+<footer>
+<p><strong>More from Hopback</strong></p>
+<ul><li><a href="/">Hopback home page</a></li><li><a href="/claude-code-hooks-session-status">Claude Code hooks for session status: how Hopback works</a></li><li><a href="/claude-code-keyboard-shortcuts-vs-code">Keyboard shortcuts for Claude Code in VS Code windows on Mac</a></li><li><a href="/claude-code-multiple-windows-vs-code">Claude Code in multiple VS Code windows: stay organized</a></li><li><a href="/claude-code-notifications-macos">Claude Code notifications on macOS: know when it waits</a></li><li><a href="/claude-code-session-switcher-vs-code">Claude Code session switcher for VS Code on Mac - Hopback</a></li><li><a href="/install-hopback-mac">Install Hopback on Mac: Homebrew or dmg, and the first-run steps</a></li><li><a href="/search-claude-code-history">Search Claude Code history and find an old session</a></li></ul>
+<p>Made by Aaron Sun · <a href="https://zexa.se">Zexa</a> · <a href="https://github.com/aaronsuns/hopback">GitHub</a><br>Hopback is an independent project, not affiliated with, endorsed by or supported by Anthropic. "Claude" and "Claude Code" are Anthropic's names for their products.</p>
+</footer>
+</body>
+</html>

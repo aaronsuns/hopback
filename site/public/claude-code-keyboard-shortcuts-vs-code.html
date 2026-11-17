@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keyboard shortcuts for Claude Code in VS Code windows on Mac</title>
+<meta name="description" content="Jump between VS Code windows running Claude Code with one keystroke: window numbers, the next session that needs you, and search. All remappable.">
+<link rel="canonical" href="https://hopback.zexa.se/claude-code-keyboard-shortcuts-vs-code">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Keyboard shortcuts for Claude Code in VS Code windows on Mac">
+<meta property="og:description" content="Jump between VS Code windows running Claude Code with one keystroke: window numbers, the next session that needs you, and search. All remappable.">
+<meta property="og:url" content="https://hopback.zexa.se/claude-code-keyboard-shortcuts-vs-code">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://hopback.zexa.se/img/og.png">
+<meta property="og:site_name" content="Hopback">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/guide.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
+  {
+   "@type": "ListItem",
+   "position": 1,
+   "name": "Hopback",
+   "item": "https://hopback.zexa.se/"
+  },
+  {
+   "@type": "ListItem",
+   "position": 2,
+   "name": "Keyboard shortcuts for Claude Code windows",
+   "item": "https://hopback.zexa.se/claude-code-keyboard-shortcuts-vs-code"
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Are the shortcuts global?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. They work from any app, because Hopback registers them with macOS."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Why do I need Accessibility permission?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Hopback needs it to list VS Code's windows and raise the one you pick."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Can I use more than nine windows?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "The number keys cover windows 1 to 9. For the rest use the next/previous window shortcut or the search."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Can I clear a shortcut I do not use?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes, with Clear in Settings, then Shortcuts."
+   }
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Article",
+ "headline": "Keyboard shortcuts for Claude Code in VS Code windows on Mac",
+ "url": "https://hopback.zexa.se/claude-code-keyboard-shortcuts-vs-code",
+ "inLanguage": "en",
+ "image": "https://hopback.zexa.se/img/shot-open-light.png",
+ "author": {
+  "@type": "Person",
+  "name": "Aaron Sun"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Zexa",
+  "url": "https://zexa.se"
+ },
+ "datePublished": "2026-11-17",
+ "dateModified": "2026-11-17"
+}
+</script>
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="/"><img src="/icon-192.png" alt="" width="28" height="28">Hopback</a>
+  <nav><a href="/#guides">Guides</a><a href="https://github.com/aaronsuns/hopback">GitHub</a></nav>
+</div></div>
+<main>
+<p class="crumbs"><a href="/">Hopback</a> / Keyboard shortcuts for Claude Code windows</p>
+<h1>Keyboard shortcuts for Claude Code in VS Code windows on Mac</h1>
+<p class="lead">When you run Claude Code in several VS Code windows, the mouse is the slow part. These are the global shortcuts Hopback adds, and how to change them.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+<p><img src="/img/shot-open-light.png" alt="Hopback&#x27;s session search: sessions waiting for you are listed first" width="560" style="max-width:100%;height:auto;border-radius:10px"></p>
+<h2>The default shortcuts</h2>
+<table>
+<tr><th>Default</th><th>Does</th></tr>
+<tr><td><kbd>⌃⌥1</kbd> … <kbd>⌃⌥9</kbd></td><td>go to VS Code window 1–9, as numbered in the menu</td></tr>
+<tr><td><kbd>⌃⌥0</kbd></td><td>go to the next session that needs you; press again for the one after</td></tr>
+<tr><td><kbd>⌃⌥⇥</kbd> / <kbd>⌃⌥⇧⇥</kbd></td><td>next / previous VS Code window</td></tr>
+<tr><td><kbd>⌃⌘C</kbd></td><td>search open sessions</td></tr>
+<tr><td><kbd>⌃⇧⌘C</kbd></td><td>search history</td></tr>
+</table>
+<h2>Stable window numbers</h2>
+<p>Windows are numbered A→Z by folder in the menu, so a project keeps the same number while its window stays open. That lets you build muscle memory: <kbd>⌃⌥2</kbd> is always the same project.</p>
+<h2>Change them</h2>
+<p>Open Settings, then Shortcuts: click a shortcut and press the new keys, or Clear it. Hopback refuses combinations without <kbd>⌃</kbd>, <kbd>⌥</kbd> or <kbd>⌘</kbd>, duplicates, and ones macOS keeps for itself.</p>
+<h2>Search instead of numbering</h2>
+<p><kbd>⌃⌘C</kbd> opens a search over the sessions that are open or running: type part of a title or folder, press <kbd>⏎</kbd> and you are there. For older conversations use <a href="/search-claude-code-history">history search</a>.</p>
+<p>See also <a href="/claude-code-multiple-windows-vs-code">Claude Code in multiple VS Code windows</a>.</p>
+<h2>Frequently asked questions</h2>
+<h3>Are the shortcuts global?</h3>
+<p>Yes. They work from any app, because Hopback registers them with macOS.</p>
+<h3>Why do I need Accessibility permission?</h3>
+<p>Hopback needs it to list VS Code&#x27;s windows and raise the one you pick.</p>
+<h3>Can I use more than nine windows?</h3>
+<p>The number keys cover windows 1 to 9. For the rest use the next/previous window shortcut or the search.</p>
+<h3>Can I clear a shortcut I do not use?</h3>
+<p>Yes, with Clear in Settings, then Shortcuts.</p>
+<div class="install">
+  <a class="cta" href="https://github.com/aaronsuns/hopback/releases/latest" target="_blank" rel="noopener">Download Hopback for macOS <small>- free, MIT</small></a>
+  <p>macOS 13 or newer, Visual Studio Code with the Claude Code extension. <a href="https://github.com/aaronsuns/hopback">Source on GitHub</a>.</p>
+</div>
+</main>
+<footer>
+<p><strong>More from Hopback</strong></p>
+<ul><li><a href="/">Hopback home page</a></li><li><a href="/claude-code-hooks-session-status">Claude Code hooks for session status: how Hopback works</a></li><li><a href="/claude-code-multiple-windows-vs-code">Claude Code in multiple VS Code windows: stay organized</a></li><li><a href="/claude-code-notifications-macos">Claude Code notifications on macOS: know when it waits</a></li><li><a href="/claude-code-session-switcher-vs-code">Claude Code session switcher for VS Code on Mac - Hopback</a></li><li><a href="/claude-code-waiting-for-permission">Claude Code is waiting for permission: how to notice it</a></li><li><a href="/install-hopback-mac">Install Hopback on Mac: Homebrew or dmg, and the first-run steps</a></li><li><a href="/search-claude-code-history">Search Claude Code history and find an old session</a></li></ul>
+<p>Made by Aaron Sun · <a href="https://zexa.se">Zexa</a> · <a href="https://github.com/aaronsuns/hopback">GitHub</a><br>Hopback is an independent project, not affiliated with, endorsed by or supported by Anthropic. "Claude" and "Claude Code" are Anthropic's names for their products.</p>
+</footer>
+</body>
+</html>
