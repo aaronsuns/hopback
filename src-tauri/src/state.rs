@@ -196,7 +196,7 @@ impl Shared {
             .map(|d| d.path().join(&file))
             .find(|p| p.is_file())?;
         let (title, cwd, mtime) = self.transcript_meta(&path);
-        Some(Session { id: id.to_owned(), cwd, title, state: None, updated_at: mtime, tool: None })
+        Some(Session { id: id.to_owned(), cwd, title, state: None, updated_at: mtime, tool: None, detail: None })
     }
 
     fn read_live(&self) -> Vec<Session> {
@@ -213,6 +213,7 @@ impl Shared {
                 state: Some(m.state),
                 updated_at: m.updated_at,
                 tool: m.tool.clone(),
+                detail: m.detail.clone(),
             })
             .collect()
     }
@@ -273,6 +274,7 @@ impl Shared {
                 state: None,
                 updated_at: e.updated_at,
                 tool: None,
+                detail: None,
             })
             .collect();
         for sh in shown.values() {
@@ -309,6 +311,7 @@ impl Shared {
             state: None,
             updated_at: e.updated_at,
             tool: None,
+            detail: None,
         })
     }
 

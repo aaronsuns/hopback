@@ -57,6 +57,10 @@ pub struct Marker {
     /// The tool the session is waiting on (approve/question), if known.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tool: Option<String>,
+    /// What the session is asking, for banners: the question text, the command or the
+    /// file to approve. Only set while it waits.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub detail: Option<String>,
 }
 
 /// The subset of the hook input we care about. Everything is optional so that
@@ -69,6 +73,49 @@ pub struct HookInput {
     pub hook_event_name: Option<String>,
     pub tool_name: Option<String>,
     pub notification_type: Option<String>,
+    pub tool_input: Option<serde_json::Value>,
+    pub message: Option<String>,
+}
+
+/// Longest detail kept in a marker, in characters.
+pub const DETAIL_MAX: usize = 300;
+
+fn clip(text: &str) -> Option<String> {
+    let one: String = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    if one.is_empty() {
+        return None;
+    }
+    if one.chars().count() <= DETAIL_MAX {
+        return Some(one);
+    }
+    let cut: String = one.chars().take(DETAIL_MAX - 1).collect();
+    Some(format!("{}…", cut.trim_end()))
+}
+
+/// The text of what a waiting session asks: the first `AskUserQuestion` question
+/// (plus how many more), the Bash command, the file a tool wants to touch, or the
+/// notification's own message. `None` when the event carries nothing readable.
+pub fn detail(input: &HookInput) -> Option<String> {
+    let ti = input.tool_input.as_ref();
+    let str_of = |k: &str| ti.and_then(|v| v.get(k)).and_then(|v| v.as_str());
+    match input.tool_name.as_deref() {
+        Some("AskUserQuestion") => {
+            let qs = ti.and_then(|v| v.get("questions")).and_then(|v| v.as_array())?;
+            let first = qs.first()?.get("question")?.as_str()?;
+            let first = clip(first)?;
+            Some(match qs.len() {
+                1 => first,
+                n => format!("{first} (+{} more)", n - 1),
+            })
+        }
+        Some("ExitPlanMode") => None,
+        Some(_) => str_of("command")
+            .or_else(|| str_of("file_path"))
+            .or_else(|| str_of("path"))
+            .or_else(|| str_of("url"))
+            .and_then(clip),
+        None => input.message.as_deref().and_then(clip),
+    }
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -197,7 +244,10 @@ pub fn handle(raw: &[u8], dir: &Path, pid: Option<i32>, now: u64) -> std::io::Re
                 updated_at: 0,
                 pid: None,
                 tool: None,
+                detail: None,
             });
+            let detail =
+                if state.needs_you() { detail(&input).or(prev.detail.filter(|_| prev.state == state)) } else { None };
             let marker = Marker {
                 session_id: session_id.to_owned(),
                 state,
@@ -206,6 +256,7 @@ pub fn handle(raw: &[u8], dir: &Path, pid: Option<i32>, now: u64) -> std::io::Re
                 updated_at: now,
                 pid: pid.or(prev.pid),
                 tool,
+                detail,
             };
             let bytes = serde_json::to_vec(&marker).map_err(std::io::Error::other)?;
             write_atomic(&path, &bytes)
@@ -354,6 +405,61 @@ mod tests {
         let raw = br#"{"session_id":"s9","hook_event_name":"UserPromptSubmit","cwd":"/Users/alex/Library/Caches/se.zexa.hopback/history"}"#;
         handle(raw, dir.path(), None, 1).unwrap();
         assert!(!marker_path(dir.path(), "s9").exists());
+    }
+
+    #[test]
+    fn detail_is_the_question_text() {
+        let q = br#"{"session_id":"s1","hook_event_name":"PreToolUse","tool_name":"AskUserQuestion","cwd":"/w","tool_input":{"questions":[{"question":"Which database\nshould we use?","options":[]},{"question":"Second?"}]}}"#;
+        let dir = tempfile::tempdir().unwrap();
+        handle(q, dir.path(), None, 1).unwrap();
+        let m = read_marker(&marker_path(dir.path(), "s1")).unwrap();
+        assert_eq!(m.state, State::Question);
+        assert_eq!(m.detail.as_deref(), Some("Which database should we use? (+1 more)"));
+        // Working clears it.
+        handle(
+            br#"{"session_id":"s1","hook_event_name":"PostToolUse","tool_name":"AskUserQuestion"}"#,
+            dir.path(),
+            None,
+            2,
+        )
+        .unwrap();
+        assert_eq!(read_marker(&marker_path(dir.path(), "s1")).unwrap().detail, None);
+    }
+
+    #[test]
+    fn detail_for_approvals_and_notifications() {
+        let dir = tempfile::tempdir().unwrap();
+        let bash = br#"{"session_id":"s2","hook_event_name":"PermissionRequest","tool_name":"Bash","tool_input":{"command":"git push origin main"}}"#;
+        handle(bash, dir.path(), None, 1).unwrap();
+        let m = read_marker(&marker_path(dir.path(), "s2")).unwrap();
+        assert_eq!((m.state, m.detail.as_deref()), (State::Approve, Some("git push origin main")));
+        // A following permission notification does not overwrite it.
+        handle(br#"{"session_id":"s2","hook_event_name":"Notification","notification_type":"permission_prompt","message":"Claude needs permission"}"#, dir.path(), None, 2).unwrap();
+        assert_eq!(
+            read_marker(&marker_path(dir.path(), "s2")).unwrap().detail.as_deref(),
+            Some("git push origin main")
+        );
+        let edit = HookInput {
+            tool_name: Some("Edit".into()),
+            tool_input: Some(serde_json::json!({"file_path":"/w/a.rs"})),
+            ..Default::default()
+        };
+        assert_eq!(detail(&edit).as_deref(), Some("/w/a.rs"));
+        let elicit = HookInput { message: Some("Pick one".into()), ..Default::default() };
+        assert_eq!(detail(&elicit).as_deref(), Some("Pick one"));
+        assert_eq!(detail(&HookInput::default()), None);
+    }
+
+    #[test]
+    fn detail_is_clipped() {
+        let long = HookInput {
+            tool_name: Some("Bash".into()),
+            tool_input: Some(serde_json::json!({"command":"x".repeat(1000)})),
+            ..Default::default()
+        };
+        let d = detail(&long).unwrap();
+        assert_eq!(d.chars().count(), DETAIL_MAX);
+        assert!(d.ends_with('…'));
     }
 
     #[test]

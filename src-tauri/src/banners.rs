@@ -42,7 +42,7 @@ pub fn announce(app: &App, fresh: Vec<Session>) {
         }
         let app2 = app.clone();
         let id = s.id.clone();
-        show(s.folder().to_owned(), board::waiting_for(&s), s.title.clone(), move || {
+        show(s.folder().to_owned(), board::waiting_for(&s), board::banner_body(&s), move || {
             crate::actions::go_to_session(&app2, &id)
         });
     }

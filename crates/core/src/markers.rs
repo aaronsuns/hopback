@@ -65,6 +65,7 @@ mod tests {
             updated_at: at,
             pid,
             tool: None,
+            detail: None,
         }
     }
 

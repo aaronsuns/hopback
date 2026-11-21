@@ -50,7 +50,23 @@
    "name": "Does Hopback work with Cursor?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "Not yet. It supports Visual Studio Code with the Claude Code extension. Cursor and VS Code Insiders are not supported yet."
+    "text": "Not yet. Hopback follows Claude Code in Visual Studio Code: it reads VS Code's windows and the Claude Code extension's state. Cursor and VS Code Insiders are not supported yet."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Does Hopback work with Codex?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. Hopback is built for Claude Code only: its plugin hooks into Claude Code's events, and it reads Claude Code's session history. OpenAI Codex is not supported."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "What does the banner show?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "The folder, what Claude is waiting for, and the text itself: the question Claude asks, the command it wants to run or the file it wants to change. Click the banner to go to that session."
    }
   },
   {
@@ -389,7 +405,11 @@ claude plugin install hopback@hopback</code></pre>
   <div class="wrap">
     <h2>Frequently asked questions</h2>
       <h3>Does Hopback work with Cursor?</h3>
-      <p>Not yet. It supports Visual Studio Code with the Claude Code extension. Cursor and VS Code Insiders are not supported yet.</p>
+      <p>Not yet. Hopback follows Claude Code in Visual Studio Code: it reads VS Code's windows and the Claude Code extension's state. Cursor and VS Code Insiders are not supported yet.</p>
+      <h3>Does Hopback work with Codex?</h3>
+      <p>No. Hopback is built for Claude Code only: its plugin hooks into Claude Code's events, and it reads Claude Code's session history. OpenAI Codex is not supported.</p>
+      <h3>What does the banner show?</h3>
+      <p>The folder, what Claude is waiting for, and the text itself: the question Claude asks, the command it wants to run or the file it wants to change. Click the banner to go to that session.</p>
       <h3>Do I need the Claude Code plugin?</h3>
       <p>Yes, for the status glyphs and banners: the plugin tells Hopback when a session is working or waiting. Without it Hopback still lists your windows and searches history.</p>
       <h3>Does Hopback send my conversations anywhere?</h3>

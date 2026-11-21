@@ -150,6 +150,7 @@ mod tests {
             state: Some(state),
             updated_at: 0,
             tool: None,
+            detail: None,
         }
     }
 

@@ -18,6 +18,8 @@ pub struct Session {
     pub state: Option<State>,
     pub updated_at: u64,
     pub tool: Option<String>,
+    /// The question text, command or file the session waits on, if the hook saw it.
+    pub detail: Option<String>,
 }
 
 impl Session {
@@ -153,6 +155,15 @@ pub fn waiting_for(s: &Session) -> String {
     }
 }
 
+/// The banner body: the question or command itself when the hook captured it,
+/// otherwise the session title.
+pub fn banner_body(s: &Session) -> String {
+    match s.detail.as_deref().filter(|d| !d.is_empty()) {
+        Some(d) => crate::transcript::one_line(d, 200),
+        None => s.title.clone(),
+    }
+}
+
 /// The next needs-you session after `last` (wrapping), for ⌃⌥0.
 pub fn next_needs_you<'a>(needs: &'a [Session], last: Option<&str>) -> Option<&'a Session> {
     let i = last.and_then(|l| needs.iter().position(|s| s.id == l)).map_or(0, |i| (i + 1) % needs.len().max(1));
@@ -180,6 +191,7 @@ mod tests {
             state,
             updated_at: at,
             tool: None,
+            detail: None,
         }
     }
 
@@ -275,6 +287,9 @@ mod tests {
         x.state = Some(State::Question);
         x.tool = Some("ExitPlanMode".into());
         assert_eq!(waiting_for(&x), "Plan ready for review");
+        assert_eq!(banner_body(&x), "title a");
+        x.detail = Some("Which database should we use?".into());
+        assert_eq!(banner_body(&x), "Which database should we use?");
         assert_eq!(row_label(&x, 120_000), "❓ web-app — title a  (2m ago)");
     }
 }

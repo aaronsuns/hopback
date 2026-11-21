@@ -43,7 +43,7 @@ When a session starts waiting for you, Hopback shows a banner. Click it to go to
 
 - macOS 13 (Ventura) or newer, Apple silicon or Intel.
 - Visual Studio Code with the Claude Code extension. Cursor and VS Code Insiders are not
-  supported yet.
+  supported yet, and neither is Codex: Hopback works with Claude Code only.
 
 ## Install
 

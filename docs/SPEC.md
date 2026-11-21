@@ -124,7 +124,7 @@ else `/opt/homebrew/bin`, `/usr/local/bin`, `~/.local/bin`.
 
 ## Banners
 
-When a session enters approve or question, show a macOS notification (folder + title + what it waits for).
+When a session enters approve or question, show a macOS notification (folder + what it waits for + the question text, command or file when the hook saw it, else the session title).
 Clicking it goes to the session. One banner per transition, not per poll. Settings can turn off approve and
 question banners separately.
 

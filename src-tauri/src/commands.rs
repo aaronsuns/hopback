@@ -99,6 +99,7 @@ pub fn search(app: Shared, mode: String, query: String) -> Vec<Row> {
                     state,
                     updated_at: e.updated_at,
                     tool: None,
+                    detail: None,
                 };
                 Row { snippet: h.snippet, content_match: h.kind == MatchKind::Content, ..to_row(&s, None, now) }
             })
